@@ -1,0 +1,1149 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>SIGMA Usaha dan Gaya</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: mission console on drafting/blueprint grid — sticky HUD bar, tab rail, one view at a time */
+:root{
+  --bg:#EDF1F6; --surface:#FAFBFD; --surface-2:#E2E8F0; --ink:#0F1F33; --muted:#475A71; --line:#C6D1DE;
+  --grid:rgba(28,86,150,.075); --accent:#B4570C; --on-accent:#FFFFFF; --accent-soft:#F6E3D0;
+  --vf:#1D64C4; --vfric:#B8520A; --vzero:#5F6E82; --vs:#177A50; --good:#177A50; --bad:#B3261E;
+  --good-soft:#DDF0E5; --bad-soft:#F7DEDC;
+  --f-display:"Chakra Petch","Trebuchet MS",sans-serif;
+  --f-body:"Plus Jakarta Sans","Segoe UI",Arial,sans-serif;
+  --f-mono:"JetBrains Mono",Consolas,"Courier New",monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0A1729; --surface:#0F2239; --surface-2:#163050; --ink:#E5EDF7; --muted:#9FB2C9; --line:#25466C;
+  --grid:rgba(110,175,255,.08); --accent:#F2A14A; --on-accent:#1A1206; --accent-soft:#3A2814;
+  --vf:#5DB0FF; --vfric:#FF9B50; --vzero:#9AA9BC; --vs:#4AD39A; --good:#4AD39A; --bad:#FF7E75;
+  --good-soft:#123A2B; --bad-soft:#3F1B1B; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0A1729; --surface:#0F2239; --surface-2:#163050; --ink:#E5EDF7; --muted:#9FB2C9; --line:#25466C;
+  --grid:rgba(110,175,255,.08); --accent:#F2A14A; --on-accent:#1A1206; --accent-soft:#3A2814;
+  --vf:#5DB0FF; --vfric:#FF9B50; --vzero:#9AA9BC; --vs:#4AD39A; --good:#4AD39A; --bad:#FF7E75;
+  --good-soft:#123A2B; --bad-soft:#3F1B1B; color-scheme:dark}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.6;
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:28px 28px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+h1,h2,h3,h4{font-family:var(--f-display);line-height:1.15;text-wrap:balance;margin:0}
+p{margin:0}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.mono,.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.wrap{max-width:1120px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+/* HUD */
+.hud{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--surface);border-bottom:1px solid var(--line)}
+.hud .wrap{display:flex;align-items:center;gap:10px;padding-block:10px;flex-wrap:wrap}
+.brand{display:flex;align-items:baseline;gap:10px;margin-right:auto;min-width:0}
+.brand b{font-family:var(--f-display);font-size:26px;letter-spacing:.06em;color:var(--accent)}
+.brand span{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:260px}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border:1px solid var(--line);border-radius:999px;font-size:13px;background:var(--bg);white-space:nowrap}
+.chip strong{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.xpbar{width:90px;height:6px;border-radius:3px;background:var(--surface-2);overflow:hidden}
+.xpbar i{display:block;height:100%;background:var(--accent);width:0;transition:width .4s}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;background:var(--bg)}
+.seg button{border:0;background:none;padding:4px 10px;font-size:13px;font-weight:700;font-family:var(--f-mono);color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent)}
+.tabs{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{border:0;background:none;padding:10px 14px;font-family:var(--f-display);font-weight:600;font-size:15px;letter-spacing:.03em;color:var(--muted);border-bottom:3px solid transparent;white-space:nowrap}
+.tab[aria-current="page"]{color:var(--ink);border-bottom-color:var(--accent)}
+.tab small{font-family:var(--f-mono);font-size:11px;color:var(--accent);margin-right:6px}
+
+main{padding-block:28px 64px}
+.view{display:flex;flex-direction:column;gap:28px}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.lead{font-size:18px;color:var(--muted);max-width:62ch}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:22px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:18px}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:16px}
+.grid2>*,.grid3>*{min-width:0}
+.btn{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--surface);padding:9px 16px;border-radius:8px;font-weight:600;font-size:15px}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.btn.small{padding:6px 12px;font-size:14px}
+.linkbtn{border:0;background:none;padding:0;color:var(--accent);font-weight:600;text-decoration:underline;text-underline-offset:3px}
+
+/* Sign-in gate */
+.gate{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,420px);gap:32px;align-items:center;min-height:60vh}
+.gate h1{font-size:clamp(34px,6vw,58px)}
+.gate h1 em{font-style:normal;color:var(--accent)}
+.signin{background:var(--surface);border:2px solid var(--ink);border-radius:var(--r);padding:24px;display:flex;flex-direction:column;gap:16px}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-weight:600;font-size:15px}
+.field input{padding:11px 12px;font-size:17px;border:1.5px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font-family:var(--f-body);width:100%}
+.field input:focus{border-color:var(--accent)}
+.field .err{font-size:13.5px;color:var(--bad)}
+.langpick{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.langpick button{border:1.5px solid var(--line);background:var(--bg);border-radius:8px;padding:10px;font-weight:600;text-align:left;display:flex;flex-direction:column;gap:2px}
+.langpick button small{font-family:var(--f-mono);font-size:11px;color:var(--muted);font-weight:400}
+.langpick button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+
+/* Home */
+.hero{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:28px;align-items:center}
+.hero h1{font-size:clamp(34px,6vw,60px);letter-spacing:.01em}
+.hero h1 em{font-style:normal;color:var(--accent)}
+.formula-plate{font-family:var(--f-mono);border:1px dashed var(--line);border-radius:var(--r);padding:20px;background:var(--surface);display:flex;flex-direction:column;gap:6px}
+.formula-plate .big{font-size:clamp(24px,4vw,34px);font-weight:600}
+.objective{display:flex;flex-direction:column;gap:10px}
+.objective .tag{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.objective h3{font-size:20px}
+.objective ul{margin:0;padding-left:18px;color:var(--muted);font-size:14px}
+.entry{display:flex;flex-direction:column;gap:8px;text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:var(--r);padding:18px}
+.entry:hover{border-color:var(--accent)}
+.entry h3{font-size:20px}
+.entry p{font-size:14px;color:var(--muted)}
+.entry .k{font-family:var(--f-mono);font-size:12px;color:var(--accent)}
+
+/* Materi */
+.toc{display:flex;gap:8px;flex-wrap:wrap}
+.toc a{color:var(--ink);text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:5px 12px;font-size:14px;background:var(--surface)}
+.toc a:hover{border-color:var(--accent)}
+.chapter{display:flex;flex-direction:column;gap:18px;scroll-margin-top:120px}
+.chapter>header{display:flex;flex-direction:column;gap:6px;border-top:2px solid var(--ink);padding-top:14px}
+.chapter h2{font-size:clamp(24px,3.4vw,32px)}
+.prose{display:flex;flex-direction:column;gap:12px;max-width:68ch}
+.prose ul,.prose ol{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:4px}
+.def{border-left:4px solid var(--accent);background:var(--accent-soft);padding:14px 18px;border-radius:0 8px 8px 0;max-width:68ch}
+.eq{font-family:var(--f-mono);font-size:clamp(20px,3vw,26px);font-weight:600;padding:14px 18px;border:1px solid var(--line);border-radius:8px;background:var(--surface);display:inline-block}
+.eq-legend{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:8px 18px;font-size:14px;color:var(--muted)}
+.eq-legend b{font-family:var(--f-mono);color:var(--ink)}
+figure{margin:0;display:flex;flex-direction:column;gap:8px}
+figcaption{font-size:13px;color:var(--muted)}
+.svgbox{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px;overflow-x:auto}
+.svgbox svg{display:block;width:100%;height:auto}
+.svgbox.wide svg{min-width:560px}
+svg text{font-family:var(--f-mono);font-size:15px;fill:var(--ink)}
+svg .t-f{fill:var(--vf)} svg .t-fr{fill:var(--vfric)} svg .t-s{fill:var(--vs)} svg .t-z{fill:var(--vzero)} svg .t-m{fill:var(--muted)}
+svg .s-f{stroke:var(--vf)} svg .s-fr{stroke:var(--vfric)} svg .s-s{stroke:var(--vs)} svg .s-z{stroke:var(--vzero)} svg .s-ink{stroke:var(--ink)} svg .s-line{stroke:var(--line)}
+svg .fill-f{fill:var(--vf)} svg .fill-fr{fill:var(--vfric)} svg .fill-s{fill:var(--vs)} svg .fill-z{fill:var(--vzero)}
+svg .box{fill:var(--surface-2);stroke:var(--ink);stroke-width:2}
+svg .node{fill:var(--surface);stroke:var(--line);stroke-width:2}
+svg .node-pos{fill:var(--surface);stroke:var(--vf);stroke-width:2}
+svg .node-neg{fill:var(--surface);stroke:var(--vfric);stroke-width:2}
+svg .node-zero{fill:var(--surface);stroke:var(--vzero);stroke-width:2}
+.example{border:1px solid var(--line);border-radius:var(--r);background:var(--surface);padding:18px;display:flex;flex-direction:column;gap:10px}
+.example h4{font-size:17px}
+.example details summary{cursor:pointer;font-weight:600;color:var(--accent)}
+.steps{font-family:var(--f-mono);font-size:14.5px;display:flex;flex-direction:column;gap:4px;margin-top:10px;overflow-x:auto}
+.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--f-display);font-size:14px;letter-spacing:.03em;background:var(--surface-2)}
+tr:last-child td{border-bottom:0}
+.pill{display:inline-block;padding:2px 10px;border-radius:999px;font-size:12.5px;font-weight:700;letter-spacing:.03em;border:1.5px solid currentColor;white-space:nowrap}
+.pill.pos{color:var(--vf)} .pill.neg{color:var(--vfric)} .pill.zero{color:var(--vzero)}
+.typecard{display:flex;flex-direction:column;gap:10px;border:1px solid var(--line);border-top:4px solid var(--c);border-radius:var(--r);background:var(--surface);padding:16px}
+.typecard h3{font-size:19px;color:var(--c)}
+.typecard p{font-size:14px;color:var(--muted)}
+.typecard svg{width:100%;max-width:220px;height:auto}
+
+/* MC */
+.check{border:1px dashed var(--accent);border-radius:var(--r);padding:16px 18px;background:var(--surface);display:flex;flex-direction:column;gap:12px}
+.check .q{font-weight:600}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr));gap:8px}
+.opt{border:1.5px solid var(--line);background:var(--bg);border-radius:8px;padding:10px 12px;text-align:left;font-size:15px}
+.opt:hover:not([disabled]){border-color:var(--accent)}
+.opt.ok{border-color:var(--good);background:var(--good-soft)}
+.opt.no{border-color:var(--bad);background:var(--bad-soft)}
+.opt[disabled]{cursor:default}
+.fb{font-size:14.5px;padding:10px 12px;border-radius:8px}
+.fb.ok{background:var(--good-soft);color:var(--ink);border-left:4px solid var(--good)}
+.fb.no{background:var(--bad-soft);color:var(--ink);border-left:4px solid var(--bad)}
+
+/* Video */
+.player{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:18px;align-items:start}
+.screen{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.screen canvas{display:block;width:100%;aspect-ratio:16/9;height:auto}
+.screen .pausenote{position:absolute;left:12px;top:12px;background:var(--accent);color:var(--on-accent);font-weight:700;font-size:13px;padding:4px 10px;border-radius:6px}
+.controls{display:flex;align-items:center;gap:10px;padding:10px 12px;border-top:1px solid var(--line);flex-wrap:wrap}
+.seekwrap{position:relative;flex:1;min-width:160px;height:22px;display:flex;align-items:center}
+.seekwrap input{width:100%;margin:0;accent-color:var(--accent)}
+.marker{position:absolute;top:-2px;width:10px;height:10px;transform:translateX(-50%) rotate(45deg);background:var(--accent);border:2px solid var(--surface);pointer-events:none}
+.marker.done{background:var(--good)}
+.time{font-family:var(--f-mono);font-size:13px;color:var(--muted);white-space:nowrap}
+.caption{padding:12px 16px;border-top:1px solid var(--line);min-height:76px;font-size:16px}
+.caption b{font-family:var(--f-display);color:var(--accent);margin-right:6px}
+.chapters{display:flex;flex-direction:column;gap:6px}
+.chapters button{display:flex;gap:10px;text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:8px 10px;font-size:14px}
+.chapters button.on{border-color:var(--accent)}
+.chapters .tm{font-family:var(--f-mono);color:var(--muted);font-size:12.5px;min-width:38px}
+.vq{border:2px solid var(--accent);border-radius:var(--r);background:var(--surface);padding:18px;display:flex;flex-direction:column;gap:12px}
+.vq-idle{border:1px dashed var(--line);border-radius:var(--r);padding:14px 18px;color:var(--muted);font-size:14px}
+
+/* Simulation */
+.simgrid{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:18px;align-items:start}
+.simgrid>*{min-width:0}
+.stage{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.stage canvas{display:block;width:100%;height:340px}
+.stagebar{display:flex;gap:8px;flex-wrap:wrap;padding:10px 12px;border-top:1px solid var(--line);align-items:center}
+.status{font-size:14px;color:var(--muted);padding:0 12px 12px}
+.ctl{display:flex;flex-direction:column;gap:14px}
+.slider{display:flex;flex-direction:column;gap:4px}
+.slider label{display:flex;justify-content:space-between;font-size:14px;gap:8px}
+.slider label output{font-family:var(--f-mono);font-variant-numeric:tabular-nums;color:var(--accent);font-weight:600}
+.slider input{width:100%;accent-color:var(--accent)}
+.presets{display:flex;gap:6px;flex-wrap:wrap}
+.presets button{border:1px solid var(--line);background:var(--bg);border-radius:999px;padding:5px 11px;font-size:13px}
+.presets button.on{border-color:var(--accent);color:var(--accent);font-weight:600}
+.warn{background:var(--bad-soft);border-left:4px solid var(--bad);padding:8px 12px;border-radius:6px;font-size:14px}
+.worktable td.num,.worktable th.num{text-align:right;white-space:nowrap}
+.bar{position:relative;height:10px;background:var(--surface-2);border-radius:5px;min-width:80px}
+.bar i{position:absolute;top:0;bottom:0;border-radius:5px}
+.bar::after{content:"";position:absolute;left:50%;top:-3px;bottom:-3px;width:1px;background:var(--muted)}
+.predict{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.predict input{width:140px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font-family:var(--f-mono)}
+
+/* Game */
+.levels{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:16px}
+.lvl{display:flex;flex-direction:column;gap:10px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);padding:18px}
+.lvl h3{font-size:20px}
+.lvl .meta{font-size:13px;color:var(--muted)}
+.lvl.locked{opacity:.6}
+.stars{font-size:20px;letter-spacing:2px;color:var(--accent)}
+.stars .off{color:var(--line)}
+.arena{border:2px solid var(--ink);border-radius:var(--r);background:var(--surface);padding:20px;display:flex;flex-direction:column;gap:14px}
+.arena-top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.hearts{font-size:20px;color:var(--bad);letter-spacing:2px}
+.hearts .off{color:var(--line)}
+.dots{display:flex;gap:5px;flex-wrap:wrap}
+.dots i{width:22px;height:6px;border-radius:3px;background:var(--surface-2)}
+.dots i.ok{background:var(--good)} .dots i.no{background:var(--bad)} .dots i.cur{background:var(--accent)}
+.scenario{font-size:19px;font-weight:600;max-width:60ch}
+.sortbtns{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.sortbtns button{border:2px solid var(--c);color:var(--c);background:var(--surface);border-radius:10px;padding:14px 8px;font-family:var(--f-display);font-weight:700;font-size:17px}
+.sortbtns button:hover:not([disabled]){background:var(--bg)}
+.numrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.numrow input{width:180px;padding:10px 12px;font-size:17px;border:1.5px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font-family:var(--f-mono)}
+.badges{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,170px),1fr));gap:10px}
+.badge{display:flex;gap:10px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--surface);font-size:14px}
+.badge .seal{width:38px;height:38px;flex:none;border-radius:50%;display:grid;place-items:center;font-family:var(--f-display);font-weight:700;border:2px dashed var(--line);color:var(--muted)}
+.badge.got .seal{border:2px solid var(--accent);background:var(--accent-soft);color:var(--accent)}
+.badge.got{border-color:var(--accent)}
+.complete{border:2px solid var(--accent);border-radius:var(--r);padding:22px;background:var(--accent-soft);display:flex;flex-direction:column;gap:8px}
+.complete h3{font-size:26px;letter-spacing:.06em}
+.idcard{border:2px solid var(--ink);border-radius:var(--r);background:var(--surface);overflow:hidden}
+.idcard .head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 18px;background:var(--ink);color:var(--bg)}
+.idcard .head b{font-family:var(--f-display);letter-spacing:.08em;font-size:18px}
+.idcard .head span{font-family:var(--f-mono);font-size:12px}
+.idcard .body{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr));gap:12px 18px;padding:18px}
+.idcard .body div{display:flex;flex-direction:column;gap:2px;min-width:0}
+.idcard .body small{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.idcard .body strong{font-size:17px;overflow-wrap:anywhere}
+
+#toast{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:50;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast{background:var(--ink);color:var(--bg);padding:10px 14px;border-radius:8px;font-weight:600;font-size:14px;box-shadow:0 6px 20px rgba(0,0,0,.25);animation:pop .25s ease-out}
+@keyframes pop{from{transform:translateY(10px);opacity:0}to{transform:none;opacity:1}}
+.muted{color:var(--muted)} .small{font-size:14px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+
+@media (max-width:900px){
+  .hero,.gate{grid-template-columns:1fr}
+  .player,.simgrid{grid-template-columns:1fr}
+  .stage canvas{height:280px}
+  .brand span{display:none}
+}
+@media (max-width:480px){ .sortbtns button{font-size:14px;padding:12px 4px} .xpbar{display:none} .hud .chip.opt-chip{display:none} .brand b{font-size:22px} }
+@media (prefers-reduced-motion:reduce){ .toast{animation:none} .xpbar i{transition:none} }
+</style>
+
+<header class="hud">
+  <div class="wrap">
+    <div class="brand"><b>SIGMA</b><span id="agentName"></span></div>
+    <span class="chip opt-chip" title="Rank"><span id="rankName">Kadet</span> · Lv <strong id="lvNum">1</strong></span>
+    <span class="chip"><strong id="xpNum">0</strong> XP <span class="xpbar"><i id="xpFill"></i></span></span>
+    <span class="chip opt-chip"><span data-en="Badges">Lencana</span> <strong id="badgeNum">0/6</strong></span>
+    <div class="seg" role="group" aria-label="Bahasa / Language"><button data-lang="id" aria-pressed="true">ID</button><button data-lang="en" aria-pressed="false">EN</button></div>
+  </div>
+  <div class="wrap" id="tabRow">
+    <nav class="tabs" aria-label="Menu">
+      <button class="tab" data-go="beranda" data-en="Home">Beranda</button>
+      <button class="tab" data-go="materi"><small>01</small><span data-en="Material">Materi</span></button>
+      <button class="tab" data-go="video"><small>02</small><span data-en="Interactive Video">Video Interaktif</span></button>
+      <button class="tab" data-go="simulasi"><small>03</small><span data-en="Simulation">Simulasi</span></button>
+      <button class="tab" data-go="gamifikasi"><small>04</small><span data-en="Gamification">Gamifikasi</span></button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- ================= MASUK (sign-in) ================= -->
+<section class="view" id="v-masuk" hidden>
+  <div class="gate">
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <span class="eyebrow" data-en="SIGMA · Gamified Simulation">SIGMA · Simulasi Gamifikasi</span>
+      <h1 data-en="Mission briefing: <em>Work and Force</em>">Pengarahan misi: <em>Usaha dan Gaya</em></h1>
+      <p class="lead" data-en="Before you start, register as an agent. Your name and class appear on your result card at the end of the mission, so your teacher can check your progress.">Sebelum mulai, daftarkan dirimu sebagai agen. Nama dan kelasmu akan muncul di kartu hasil pada akhir misi, sehingga gurumu bisa memeriksa kemajuanmu.</p>
+      <p class="small muted" data-en="Your name and progress are stored only in this browser on this device.">Nama dan progresmu hanya disimpan di peramban pada perangkat ini.</p>
+    </div>
+    <form class="signin" id="signinForm" novalidate>
+      <span class="eyebrow" data-en="Agent registration">Pendaftaran agen</span>
+      <div class="field">
+        <label for="inName" data-en="Student name">Nama siswa</label>
+        <input id="inName" autocomplete="name" maxlength="60" placeholder="mis. Aisyah Putri" data-en-ph="e.g. Aisyah Putri">
+        <span class="err" id="errName" hidden data-en="Please write your name (at least 2 letters).">Tulis namamu (minimal 2 huruf).</span>
+      </div>
+      <div class="field">
+        <label for="inClass" data-en="Class">Kelas</label>
+        <input id="inClass" maxlength="30" placeholder="mis. X MIPA 2" data-en-ph="e.g. Grade 10 A">
+        <span class="err" id="errClass" hidden data-en="Please write your class.">Tulis kelasmu.</span>
+      </div>
+      <div class="field">
+        <span style="font-weight:600;font-size:15px" data-en="Language">Bahasa</span>
+        <div class="langpick" role="group" aria-label="Bahasa / Language">
+          <button type="button" data-lang="id" aria-pressed="true">Bahasa Indonesia<small>ID</small></button>
+          <button type="button" data-lang="en" aria-pressed="false">English<small>EN</small></button>
+        </div>
+      </div>
+      <button class="btn primary" type="submit" style="justify-content:center;padding-block:12px" data-en="Start the mission">Mulai misi</button>
+    </form>
+  </div>
+</section>
+
+<!-- ================= BERANDA ================= -->
+<section class="view" id="v-beranda" hidden>
+  <div class="hero">
+    <div style="display:flex;flex-direction:column;align-items:flex-start;gap:14px">
+      <span class="eyebrow" id="greet"></span>
+      <h1 data-en="When does a force <em>do work</em>?">Kapan sebuah gaya <em>melakukan usaha</em>?</h1>
+      <p class="lead" data-en="Complete these four modules to master the link between force, displacement and work. Every correct answer earns XP, and every level you finish earns a badge.">Selesaikan empat modul ini untuk menguasai hubungan gaya, perpindahan, dan usaha. Setiap jawaban benar memberi XP, dan setiap level yang selesai memberi lencana.</p>
+      <div class="row"><button class="btn primary" data-go="materi" data-en="Start with the Material">Mulai dari Materi</button><button class="btn" data-go="gamifikasi" data-en="Go to the Mission">Langsung ke Misi</button></div>
+    </div>
+    <div class="formula-plate">
+      <span class="eyebrow" data-en="Core formula">Rumus inti</span>
+      <span class="big">W = F · s · cos θ</span>
+      <span class="small muted" data-en="W work (J) · F force (N) · s displacement (m) · θ angle between F and s">W usaha (J) · F gaya (N) · s perpindahan (m) · θ sudut antara F dan s</span>
+      <span class="big" style="font-size:22px;margin-top:8px">W<sub>total</sub> = ΣW = F<sub>R</sub> · s</span>
+    </div>
+  </div>
+
+  <div class="panel" style="display:flex;flex-direction:column;gap:16px">
+    <div><span class="eyebrow" data-en="Learning objectives">Tujuan pembelajaran</span><h2 style="font-size:24px;margin-top:4px" data-en="After this lesson, students can:">Setelah kegiatan ini, siswa dapat:</h2></div>
+    <div class="grid3">
+      <div class="objective"><span class="tag" data-en="Objective 1">Tujuan 1</span><h3 data-en="Explain the concept of work in relation to force and displacement">Menjelaskan konsep usaha dalam hubungannya dengan gaya dan perpindahan</h3><ul data-en="<li>Material, chapter 1</li><li>Video 00:00–00:49</li><li>Mission Level 1</li>"><li>Materi bab 1</li><li>Video 00:00–00:49</li><li>Misi Level 1</li></ul></div>
+      <div class="objective"><span class="tag" data-en="Objective 2">Tujuan 2</span><h3 data-en="Calculate the work done by the resultant force">Menghitung besar usaha oleh resultan gaya</h3><ul data-en="<li>Material, chapter 2</li><li>Video 01:10–01:32</li><li>Simulation (Mission A)</li><li>Mission Level 3</li>"><li>Materi bab 2</li><li>Video 01:10–01:32</li><li>Simulasi (Misi A)</li><li>Misi Level 3</li></ul></div>
+      <div class="objective"><span class="tag" data-en="Objective 3">Tujuan 3</span><h3 data-en="Distinguish positive, zero and negative work">Membedakan usaha positif, usaha nol, dan usaha negatif</h3><ul data-en="<li>Material, chapter 3</li><li>Video 00:49–01:10</li><li>Simulation (presets)</li><li>Mission Level 2</li>"><li>Materi bab 3</li><li>Video 00:49–01:10</li><li>Simulasi (preset)</li><li>Misi Level 2</li></ul></div>
+    </div>
+  </div>
+
+  <div class="grid2" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr))">
+    <button class="entry" data-go="materi"><span class="k" data-en="01 · Material">01 · Materi</span><h3 data-en="Key Material">Materi Ringkas</h3><p data-en="Definition, formula, force diagrams, step-by-step examples and quick checks.">Definisi, rumus, diagram gaya, contoh soal bertahap, dan cek pemahaman.</p></button>
+    <button class="entry" data-go="video"><span class="k" data-en="02 · Interactive Video">02 · Video Interaktif</span><h3 data-en="Interactive Video">Video Interaktif</h3><p data-en="A 1 min 42 s animation that stops at 4 points to question you.">Animasi 1 menit 42 detik yang berhenti di 4 titik untuk menanyaimu.</p></button>
+    <button class="entry" data-go="simulasi"><span class="k" data-en="03 · Simulation">03 · Simulasi</span><h3 data-en="Force and Displacement Lab">Lab Gaya dan Perpindahan</h3><p data-en="Set force, angle, friction and mass, then watch the work of each force being calculated live.">Atur gaya, sudut, gesekan, dan massa, lalu lihat usaha tiap gaya dihitung langsung.</p></button>
+    <button class="entry" data-go="gamifikasi"><span class="k" data-en="04 · Gamification">04 · Gamifikasi</span><h3 data-en="SIGMA Mission">Misi SIGMA</h3><p data-en="Three levels with lives, XP, stars and badges.">Tiga level dengan nyawa, XP, bintang, dan lencana.</p></button>
+  </div>
+  <p class="small muted"><span data-en="Not you?">Bukan kamu?</span> <button class="linkbtn" id="switchStudent" data-en="Switch student">Ganti siswa</button></p>
+  <div class="panel" id="switchConfirm" hidden style="display:flex;flex-direction:column;gap:10px">
+    <p data-en="Switching student clears the name, XP and badges stored on this device. Continue?">Mengganti siswa akan menghapus nama, XP, dan lencana yang tersimpan di perangkat ini. Lanjutkan?</p>
+    <div class="row"><button class="btn primary" id="switchYes" data-en="Yes, switch student">Ya, ganti siswa</button><button class="btn" id="switchNo" data-en="Cancel">Batal</button></div>
+  </div>
+</section>
+
+<!-- ================= MATERI ================= -->
+<section class="view" id="v-materi" hidden>
+  <div style="display:flex;flex-direction:column;gap:10px">
+    <span class="eyebrow" data-en="Module 01 · Material">Modul 01 · Materi</span>
+    <h1 style="font-size:clamp(30px,5vw,44px)" data-en="Work and Force">Usaha dan Gaya</h1>
+    <nav class="toc">
+      <a href="#bab-1" data-scroll="bab-1" data-en="1 · The concept of work">1 · Konsep usaha</a>
+      <a href="#bab-2" data-scroll="bab-2" data-en="2 · Work by the resultant force">2 · Usaha oleh resultan gaya</a>
+      <a href="#bab-3" data-scroll="bab-3" data-en="3 · Positive, zero, negative work">3 · Usaha positif, nol, negatif</a>
+      <a href="#bab-4" data-scroll="bab-4" data-en="Summary">Rangkuman</a>
+    </nav>
+  </div>
+
+  <!-- Bab 1 -->
+  <article class="chapter" id="bab-1">
+    <header><span class="eyebrow" data-en="Objective 1">Tujuan 1</span><h2 data-en="The concept of work: a force that produces displacement">Konsep usaha: gaya yang menghasilkan perpindahan</h2></header>
+    <div class="def" data-en="<b>Work (W)</b> is the energy transferred by a force to an object (or from it) when the object is displaced."><b>Usaha (W)</b> adalah energi yang dipindahkan oleh sebuah gaya kepada benda (atau dari benda) ketika benda tersebut mengalami perpindahan.</div>
+    <div class="grid2">
+      <div class="prose">
+        <p data-en="In everyday life, “working hard” means getting tired. In physics, work is done only when three conditions are met:">Dalam kehidupan sehari-hari, “bekerja keras” berarti merasa lelah. Dalam fisika, usaha hanya terjadi bila tiga syarat terpenuhi:</p>
+        <ol data-en="<li>A <b>force</b> (F) acts on the object.</li><li>The object is <b>displaced</b> (s ≠ 0).</li><li>The force has a <b>component parallel</b> to the displacement (θ ≠ 90°).</li>">
+          <li>Ada <b>gaya</b> (F) yang bekerja pada benda.</li>
+          <li>Benda mengalami <b>perpindahan</b> (s ≠ 0).</li>
+          <li>Gaya memiliki <b>komponen sejajar</b> dengan arah perpindahan (θ ≠ 90°).</li>
+        </ol>
+        <p data-en="Pushing a wall until you sweat does no work on the wall, because the wall does not move (s = 0). The tiredness comes from chemical energy in your muscles turning into heat, not from mechanical work on the wall.">Mendorong tembok sampai berkeringat tidak menghasilkan usaha pada tembok, karena tembok tidak berpindah (s = 0). Rasa lelah berasal dari energi kimia di otot yang berubah menjadi panas, bukan dari usaha mekanik pada tembok.</p>
+        <p data-en="If the force makes an angle θ with the displacement, only the component <b>F cos θ</b> along the displacement does work. The component <b>F sin θ</b> is perpendicular to the displacement, so it does no work.">Jika gaya membentuk sudut θ terhadap perpindahan, hanya komponen <b>F cos θ</b> yang searah perpindahan yang melakukan usaha. Komponen <b>F sin θ</b> tegak lurus perpindahan sehingga tidak melakukan usaha.</p>
+      </div>
+      <figure>
+        <div class="svgbox">
+          <svg viewBox="0 0 520 270" role="img" aria-label="F, θ, F cos θ, F sin θ, s">
+            <defs>
+              <marker id="ah-f" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="fill-f"/></marker>
+              <marker id="ah-s" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="fill-s"/></marker>
+              <marker id="ah-z" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="fill-z"/></marker>
+              <marker id="ah-fr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="fill-fr"/></marker>
+            </defs>
+            <line x1="20" y1="200" x2="500" y2="200" class="s-ink" stroke-width="2"/>
+            <rect x="330" y="130" width="90" height="70" fill="none" class="s-line" stroke-width="2" stroke-dasharray="6 5"/>
+            <rect x="90" y="130" width="90" height="70" class="box" rx="3"/>
+            <line x1="135" y1="165" x2="274" y2="165" class="s-f" stroke-width="2.5" stroke-dasharray="7 5" marker-end="url(#ah-f)"/>
+            <line x1="274" y1="165" x2="274" y2="70" class="s-z" stroke-width="2.5" stroke-dasharray="7 5" marker-end="url(#ah-z)"/>
+            <line x1="135" y1="165" x2="272" y2="69" class="s-f" stroke-width="4" marker-end="url(#ah-f)"/>
+            <path d="M175 165 A40 40 0 0 0 167.8 142.1" fill="none" class="s-ink" stroke-width="1.5"/>
+            <text x="181" y="156">θ</text>
+            <text x="196" y="96" class="t-f" style="font-weight:600">F</text>
+            <text x="196" y="188" class="t-f">F cos θ</text>
+            <text x="282" y="122" class="t-z">F sin θ</text>
+            <line x1="135" y1="232" x2="372" y2="232" class="s-s" stroke-width="3" marker-end="url(#ah-s)"/>
+            <text x="180" y="258" class="t-s"><tspan data-en="s (displacement)">s (perpindahan)</tspan></text>
+          </svg>
+        </div>
+        <figcaption data-en="Only the component F cos θ (blue dashed) is parallel to the displacement s, so only this component does work.">Hanya komponen F cos θ (biru putus-putus) yang sejajar perpindahan s, jadi hanya komponen ini yang melakukan usaha.</figcaption>
+      </figure>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <span class="eq">W = F · s · cos θ</span>
+      <div class="eq-legend">
+        <span data-en="<b>W</b> work, joule (J)"><b>W</b> usaha, joule (J)</span>
+        <span data-en="<b>F</b> force, newton (N)"><b>F</b> gaya, newton (N)</span>
+        <span data-en="<b>s</b> displacement, metre (m)"><b>s</b> perpindahan, meter (m)</span>
+        <span data-en="<b>θ</b> angle between F and s"><b>θ</b> sudut antara arah F dan arah s</span>
+      </div>
+      <p class="small muted" style="max-width:68ch" data-en="1 J = 1 N·m. Work is a <b>scalar</b>: it has a value (positive, zero or negative) but no direction. If the force is along the displacement (θ = 0°), the formula becomes W = F · s.">1 J = 1 N·m. Usaha adalah besaran <b>skalar</b>: hanya punya nilai (bisa positif, nol, atau negatif), tidak punya arah. Jika gaya searah perpindahan (θ = 0°), rumus menjadi W = F · s.</p>
+    </div>
+    <div class="grid2">
+      <div class="example">
+        <span class="eyebrow" data-en="Example 1 · Force along the motion">Contoh 1 · Gaya searah</span>
+        <h4 data-en="A box is pushed horizontally with a 20 N force for 5 m in the direction of the force. How much work is done?">Kotak didorong mendatar dengan gaya 20 N sejauh 5 m searah gaya. Berapa usahanya?</h4>
+        <details><summary data-en="Show solution">Tampilkan penyelesaian</summary>
+          <div class="steps"><span data-en="Given: F = 20 N, s = 5 m, θ = 0°">Diketahui: F = 20 N, s = 5 m, θ = 0°</span><span>W = F · s · cos 0° = 20 × 5 × 1</span><span><b>W = 100 J</b></span></div>
+        </details>
+      </div>
+      <div class="example">
+        <span class="eyebrow" data-en="Example 2 · Angled force">Contoh 2 · Gaya miring</span>
+        <h4 data-en="A suitcase is pulled with a 50 N force at 60° to the floor. It moves 10 m. How much work does the pulling force do?">Koper ditarik dengan gaya 50 N yang membentuk sudut 60° terhadap lantai. Koper berpindah 10 m. Berapa usaha gaya tarik?</h4>
+        <details><summary data-en="Show solution">Tampilkan penyelesaian</summary>
+          <div class="steps"><span data-en="Given: F = 50 N, s = 10 m, θ = 60°, cos 60° = 0.5">Diketahui: F = 50 N, s = 10 m, θ = 60°, cos 60° = 0,5</span><span data-en="W = F · s · cos θ = 50 × 10 × 0.5">W = F · s · cos θ = 50 × 10 × 0,5</span><span data-en="<b>W = 250 J</b> (250 J of energy transferred to the suitcase)"><b>W = 250 J</b> (energi 250 J dipindahkan ke koper)</span></div>
+        </details>
+      </div>
+    </div>
+    <div class="check" data-mc="m1"></div>
+  </article>
+
+  <!-- Bab 2 -->
+  <article class="chapter" id="bab-2">
+    <header><span class="eyebrow" data-en="Objective 2">Tujuan 2</span><h2 data-en="Calculating the work done by the resultant force">Menghitung usaha oleh resultan gaya</h2></header>
+    <div class="grid2">
+      <div class="prose">
+        <p data-en="An object usually has several forces acting on it at once: a pull, friction, weight and the normal force. Because work is a scalar, the <b>total work</b> is the algebraic sum of the work done by each force (signs included).">Pada umumnya sebuah benda dikenai beberapa gaya sekaligus: gaya tarik, gaya gesek, gaya berat, dan gaya normal. Karena usaha adalah skalar, <b>usaha total</b> adalah jumlah aljabar usaha tiap gaya (tandanya ikut dijumlahkan).</p>
+        <p data-en="<b>Method 1 · Add the work of each force</b>"><b>Cara 1 · Jumlahkan usaha tiap gaya</b></p>
+        <span class="eq" style="font-size:19px">W<sub>total</sub> = W<sub>1</sub> + W<sub>2</sub> + W<sub>3</sub> + …</span>
+        <p data-en="<b>Method 2 · Find the resultant force first</b>, take its component along the displacement, then multiply by the displacement:"><b>Cara 2 · Hitung resultan gaya dulu</b>, ambil komponennya yang sejajar perpindahan, lalu kalikan dengan perpindahan:</p>
+        <span class="eq" style="font-size:19px">W<sub>total</sub> = F<sub>R</sub> · s</span>
+        <p data-en="Both methods always give the same result. On a horizontal path, the weight (w) and the normal force (N) are perpendicular to the displacement, so they do zero work.">Kedua cara selalu memberi hasil yang sama. Pada lintasan mendatar, gaya berat (w) dan gaya normal (N) tegak lurus perpindahan sehingga usahanya nol.</p>
+      </div>
+      <figure>
+        <div class="svgbox">
+          <svg viewBox="0 0 520 285" role="img" aria-label="F = 40 N, 30°, f = 14.6 N, N, w, s = 8 m">
+            <line x1="20" y1="210" x2="500" y2="210" class="s-ink" stroke-width="2"/>
+            <rect x="200" y="140" width="100" height="70" class="box" rx="3"/>
+            <line x1="250" y1="175" x2="378" y2="101" class="s-f" stroke-width="4" marker-end="url(#ah-f)"/>
+            <text x="352" y="88" class="t-f" style="font-weight:600">F = 40 N</text>
+            <path d="M290 175 A40 40 0 0 0 284.6 155" fill="none" class="s-ink" stroke-width="1.5"/>
+            <text x="296" y="166">30°</text>
+            <line x1="200" y1="196" x2="118" y2="196" class="s-fr" stroke-width="4" marker-end="url(#ah-fr)"/>
+            <text x="28" y="186" class="t-fr" style="font-weight:600"><tspan data-en="f = 14.6 N">f = 14,6 N</tspan></text>
+            <line x1="250" y1="140" x2="250" y2="86" class="s-z" stroke-width="3" marker-end="url(#ah-z)"/>
+            <text x="200" y="80" class="t-z">N (W = 0)</text>
+            <line x1="250" y1="210" x2="250" y2="262" class="s-z" stroke-width="3" marker-end="url(#ah-z)"/>
+            <text x="262" y="258" class="t-z">w (W = 0)</text>
+            <line x1="340" y1="245" x2="488" y2="245" class="s-s" stroke-width="3" marker-end="url(#ah-s)"/>
+            <text x="372" y="272" class="t-s">s = 8 m</text>
+          </svg>
+        </div>
+        <figcaption data-en="Mission A: every force acting on the crate. Only F and f do work.">Misi A: semua gaya yang bekerja pada peti. Hanya F dan f yang melakukan usaha.</figcaption>
+      </figure>
+    </div>
+    <div class="example">
+      <span class="eyebrow" data-en="Example 3 · Mission A (two methods)">Contoh 3 · Misi A (dua cara)</span>
+      <h4 data-en="A crate is pulled 8 m by a 40 N force at 30° to the floor. Floor friction is 14.6 N. Find the total work done on the crate.">Peti ditarik sejauh 8 m dengan gaya 40 N yang membentuk sudut 30° terhadap lantai. Gaya gesek lantai 14,6 N. Hitung usaha total pada peti.</h4>
+      <details open><summary data-en="Show solution">Tampilkan penyelesaian</summary>
+        <div class="table-wrap" style="margin-top:10px">
+          <table>
+            <thead data-en="<tr><th>Force</th><th>θ to s</th><th>Calculation</th><th style='text-align:right'>Work</th></tr>"><tr><th>Gaya</th><th>θ terhadap s</th><th>Perhitungan</th><th style="text-align:right">Usaha</th></tr></thead>
+            <tbody data-en="<tr><td>Pull F = 40 N</td><td>30°</td><td class='mono'>40 × 8 × cos 30° = 40 × 8 × 0.866</td><td class='num' style='text-align:right'>+277.1 J</td></tr><tr><td>Friction f = 14.6 N</td><td>180°</td><td class='mono'>14.6 × 8 × cos 180° = 14.6 × 8 × (−1)</td><td class='num' style='text-align:right'>−116.8 J</td></tr><tr><td>Weight w</td><td>90°</td><td class='mono'>w × 8 × cos 90°</td><td class='num' style='text-align:right'>0 J</td></tr><tr><td>Normal force N</td><td>90°</td><td class='mono'>N × 8 × cos 90°</td><td class='num' style='text-align:right'>0 J</td></tr><tr><td><b>Method 1: sum</b></td><td></td><td class='mono'>277.1 + (−116.8) + 0 + 0</td><td class='num' style='text-align:right'><b>+160.3 J</b></td></tr><tr><td><b>Method 2: resultant</b></td><td></td><td class='mono'>F<sub>R</sub> = 40 cos 30° − 14.6 = 20.04 N → 20.04 × 8</td><td class='num' style='text-align:right'><b>+160.3 J</b></td></tr>">
+              <tr><td>Gaya tarik F = 40 N</td><td>30°</td><td class="mono">40 × 8 × cos 30° = 40 × 8 × 0,866</td><td class="num" style="text-align:right">+277,1 J</td></tr>
+              <tr><td>Gaya gesek f = 14,6 N</td><td>180°</td><td class="mono">14,6 × 8 × cos 180° = 14,6 × 8 × (−1)</td><td class="num" style="text-align:right">−116,8 J</td></tr>
+              <tr><td>Gaya berat w</td><td>90°</td><td class="mono">w × 8 × cos 90°</td><td class="num" style="text-align:right">0 J</td></tr>
+              <tr><td>Gaya normal N</td><td>90°</td><td class="mono">N × 8 × cos 90°</td><td class="num" style="text-align:right">0 J</td></tr>
+              <tr><td><b>Cara 1: jumlah</b></td><td></td><td class="mono">277,1 + (−116,8) + 0 + 0</td><td class="num" style="text-align:right"><b>+160,3 J</b></td></tr>
+              <tr><td><b>Cara 2: resultan</b></td><td></td><td class="mono">F<sub>R</sub> = 40 cos 30° − 14,6 = 20,04 N → 20,04 × 8</td><td class="num" style="text-align:right"><b>+160,3 J</b></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="small muted" style="margin-top:8px" data-en="W<sub>total</sub> is positive, so the crate’s kinetic energy increases: it speeds up.">W<sub>total</sub> positif, jadi energi kinetik peti bertambah: peti makin cepat.</p>
+      </details>
+    </div>
+    <div class="grid2">
+      <div class="example">
+        <span class="eyebrow" data-en="Example 4 · Pull and friction">Contoh 4 · Gaya searah dan gesekan</span>
+        <h4 data-en="A 2 kg block starts at rest and is pulled horizontally with 20 N. Friction is 5 N. The block moves 4 m. Find the total work and its final speed.">Balok 2 kg mula-mula diam, ditarik mendatar 20 N. Gaya gesek 5 N. Balok berpindah 4 m. Hitung usaha total dan kecepatan akhirnya.</h4>
+        <details><summary data-en="Show solution">Tampilkan penyelesaian</summary>
+          <div class="steps" data-en="<span>W<sub>F</sub> = 20 × 4 = +80 J</span><span>W<sub>f</sub> = 5 × 4 × cos 180° = −20 J</span><span>W<sub>total</sub> = 80 − 20 = <b>+60 J</b> (or F<sub>R</sub>·s = 15 × 4)</span><span>W<sub>total</sub> = ΔEk → 60 = ½ · 2 · v² → <b>v ≈ 7.7 m/s</b></span>"><span>W<sub>F</sub> = 20 × 4 = +80 J</span><span>W<sub>f</sub> = 5 × 4 × cos 180° = −20 J</span><span>W<sub>total</sub> = 80 − 20 = <b>+60 J</b> (atau F<sub>R</sub>·s = 15 × 4)</span><span>W<sub>total</sub> = ΔEk → 60 = ½ · 2 · v² → <b>v ≈ 7,7 m/s</b></span></div>
+        </details>
+      </div>
+      <div class="example">
+        <span class="eyebrow" data-en="Extension · Work–energy theorem">Pengayaan · Teorema usaha–energi</span>
+        <h4 data-en="Total work equals the change in the object’s kinetic energy.">Usaha total sama dengan perubahan energi kinetik benda.</h4>
+        <span class="eq" style="font-size:18px">W<sub>total</sub> = ΔEk = ½ m v<sub>2</sub>² − ½ m v<sub>1</sub>²</span>
+        <p class="small muted" data-en="W<sub>total</sub> &gt; 0: the object speeds up. W<sub>total</sub> = 0: its speed stays the same. W<sub>total</sub> &lt; 0: it slows down. You can test this in the Simulation: the W<sub>total</sub> row always equals ΔEk.">W<sub>total</sub> &gt; 0: benda makin cepat. W<sub>total</sub> = 0: kelajuan tetap. W<sub>total</sub> &lt; 0: benda melambat. Kamu bisa membuktikannya di Simulasi: kolom W<sub>total</sub> selalu sama dengan ΔEk.</p>
+      </div>
+    </div>
+    <div class="check" data-mc="m2"></div>
+  </article>
+
+  <!-- Bab 3 -->
+  <article class="chapter" id="bab-3">
+    <header><span class="eyebrow" data-en="Objective 3">Tujuan 3</span><h2 data-en="Positive, zero and negative work">Usaha positif, usaha nol, dan usaha negatif</h2></header>
+    <p class="prose" data-en="The sign of the work depends on cos θ, that is, on the angle between the force and the displacement.">Tanda usaha ditentukan oleh nilai cos θ, yaitu oleh sudut antara arah gaya dan arah perpindahan.</p>
+    <div class="grid3">
+      <div class="typecard" style="--c:var(--vf)">
+        <h3 data-en="Positive work">Usaha positif</h3>
+        <svg viewBox="0 0 200 110" role="img" aria-label="F, s"><line x1="25" y1="40" x2="170" y2="40" class="s-f" stroke-width="4" marker-end="url(#ah-f)"/><text x="12" y="30" class="t-f">F</text><line x1="25" y1="82" x2="170" y2="82" class="s-s" stroke-width="3" marker-end="url(#ah-s)"/><text x="12" y="104" class="t-s">s</text></svg>
+        <p class="mono" style="color:var(--ink)">0° ≤ θ &lt; 90° → cos θ &gt; 0</p>
+        <p data-en="The force has a component along the displacement. The force <b>gives</b> energy to the object.">Gaya memiliki komponen searah perpindahan. Gaya <b>memberi</b> energi kepada benda.</p>
+        <p data-en="<b>Examples:</b> the push on a trolley moving forward; the weight of a falling ball."><b>Contoh:</b> gaya dorong pada troli yang bergerak maju; gaya berat pada bola yang jatuh.</p>
+      </div>
+      <div class="typecard" style="--c:var(--vzero)">
+        <h3 data-en="Zero work">Usaha nol</h3>
+        <svg viewBox="0 0 200 110" role="img" aria-label="F ⟂ s"><line x1="60" y1="92" x2="60" y2="18" class="s-z" stroke-width="4" marker-end="url(#ah-z)"/><text x="70" y="26" class="t-z">F</text><line x1="60" y1="92" x2="185" y2="92" class="s-s" stroke-width="3" marker-end="url(#ah-s)"/><text x="170" y="80" class="t-s">s</text><path d="M60 78 H74 V92" fill="none" class="s-ink" stroke-width="1.5"/></svg>
+        <p class="mono" style="color:var(--ink)">θ = 90° → cos θ = 0</p>
+        <p data-en="Also when <b>s = 0</b> (no displacement) or F = 0. The force transfers <b>no</b> energy.">Juga terjadi bila <b>s = 0</b> (benda tidak berpindah) atau F = 0. Gaya <b>tidak</b> memindahkan energi.</p>
+        <p data-en="<b>Examples:</b> the lifting force on a bag carried while walking on level ground; pushing a wall; the centripetal force in uniform circular motion."><b>Contoh:</b> gaya angkat pada tas yang dibawa berjalan mendatar; mendorong tembok; gaya sentripetal pada gerak melingkar beraturan.</p>
+      </div>
+      <div class="typecard" style="--c:var(--vfric)">
+        <h3 data-en="Negative work">Usaha negatif</h3>
+        <svg viewBox="0 0 200 110" role="img" aria-label="F ← s →"><line x1="170" y1="40" x2="25" y2="40" class="s-fr" stroke-width="4" marker-end="url(#ah-fr)"/><text x="176" y="30" class="t-fr">F</text><line x1="25" y1="82" x2="170" y2="82" class="s-s" stroke-width="3" marker-end="url(#ah-s)"/><text x="12" y="104" class="t-s">s</text></svg>
+        <p class="mono" style="color:var(--ink)">90° &lt; θ ≤ 180° → cos θ &lt; 0</p>
+        <p data-en="The force has a component opposite to the displacement. The force <b>takes</b> energy from the object.">Gaya memiliki komponen berlawanan dengan perpindahan. Gaya <b>mengambil</b> energi dari benda.</p>
+        <p data-en="<b>Examples:</b> friction or braking force on a moving car; the weight of a ball while it is rising."><b>Contoh:</b> gaya gesek atau gaya rem pada mobil yang melaju; gaya berat pada bola yang sedang naik.</p>
+      </div>
+    </div>
+    <div class="grid2">
+      <figure>
+        <div class="svgbox wide">
+          <svg viewBox="0 0 640 300" role="img" aria-label="Decision tree">
+            <rect x="170" y="14" width="300" height="52" rx="8" class="node"/>
+            <text x="320" y="36" text-anchor="middle"><tspan data-en="Object displaced (s ≠ 0)">Benda berpindah (s ≠ 0)</tspan></text>
+            <text x="320" y="56" text-anchor="middle"><tspan data-en="and a force acts (F ≠ 0)?">dan ada gaya (F ≠ 0)?</tspan></text>
+            <line x1="170" y1="40" x2="95" y2="40" class="s-ink" stroke-width="2"/><line x1="95" y1="40" x2="95" y2="112" class="s-ink" stroke-width="2" marker-end="url(#ah-z)"/>
+            <text x="102" y="32" class="t-m"><tspan data-en="no">tidak</tspan></text>
+            <rect x="25" y="116" width="140" height="44" rx="8" class="node-zero"/>
+            <text x="95" y="143" text-anchor="middle" class="t-z" style="font-weight:600">W = 0</text>
+            <line x1="320" y1="66" x2="320" y2="112" class="s-ink" stroke-width="2" marker-end="url(#ah-z)"/>
+            <text x="328" y="94" class="t-m"><tspan data-en="yes">ya</tspan></text>
+            <rect x="200" y="116" width="240" height="44" rx="8" class="node"/>
+            <text x="320" y="143" text-anchor="middle"><tspan data-en="Angle θ between F and s?">Sudut θ antara F dan s?</tspan></text>
+            <line x1="260" y1="160" x2="110" y2="226" class="s-ink" stroke-width="2" marker-end="url(#ah-z)"/>
+            <line x1="320" y1="160" x2="320" y2="226" class="s-ink" stroke-width="2" marker-end="url(#ah-z)"/>
+            <line x1="380" y1="160" x2="530" y2="226" class="s-ink" stroke-width="2" marker-end="url(#ah-z)"/>
+            <text x="140" y="190" class="t-m">θ &lt; 90°</text><text x="328" y="198" class="t-m">θ = 90°</text><text x="456" y="190" class="t-m">θ &gt; 90°</text>
+            <rect x="30" y="230" width="160" height="48" rx="8" class="node-pos"/><text x="110" y="260" text-anchor="middle" class="t-f" style="font-weight:600"><tspan data-en="W positive">W positif</tspan></text>
+            <rect x="240" y="230" width="160" height="48" rx="8" class="node-zero"/><text x="320" y="260" text-anchor="middle" class="t-z" style="font-weight:600">W = 0</text>
+            <rect x="450" y="230" width="160" height="48" rx="8" class="node-neg"/><text x="530" y="260" text-anchor="middle" class="t-fr" style="font-weight:600"><tspan data-en="W negative">W negatif</tspan></text>
+          </svg>
+        </div>
+        <figcaption data-en="Decision tree: first check whether there is a displacement, then look at the angle θ.">Pohon keputusan: cek dulu ada perpindahan atau tidak, lalu lihat sudut θ.</figcaption>
+      </figure>
+      <div class="prose">
+        <p data-en="<b>Distinguish the work of one force from the total work.</b> The sign of one force’s work tells you whether that force gives or takes energy. Whether the object speeds up or slows down depends on the <b>total work</b> (the work of the resultant force)."><b>Hati-hati membedakan usaha satu gaya dan usaha total.</b> Tanda usaha satu gaya menunjukkan apakah gaya itu memberi atau mengambil energi. Apakah benda makin cepat atau makin lambat ditentukan oleh <b>usaha total</b> (usaha resultan gaya).</p>
+        <p data-en="Example: a crate is pulled at constant velocity. The pull does positive work, friction does negative work of the same size, so the total work is zero and the crate’s speed stays the same.">Contoh: sebuah peti ditarik dengan kecepatan tetap. Usaha gaya tarik positif, usaha gaya gesek negatif dengan besar yang sama, sehingga usaha total nol dan kelajuan peti tetap.</p>
+        <p data-en="Another example: a ball is thrown upwards. While rising, its weight (downwards) is opposite to its displacement (upwards), so the weight does negative work and the ball slows down. On the way down they point the same way, the weight does positive work and the ball speeds up.">Contoh lain: bola dilempar ke atas. Saat naik, gaya berat (ke bawah) berlawanan dengan perpindahan (ke atas), jadi usaha gaya berat negatif dan bola melambat. Saat turun, keduanya searah, usaha gaya berat positif dan bola makin cepat.</p>
+      </div>
+    </div>
+    <div class="check" data-mc="m3"></div>
+  </article>
+
+  <!-- Rangkuman -->
+  <article class="chapter" id="bab-4">
+    <header><span class="eyebrow" data-en="Summary">Rangkuman</span><h2 data-en="Mission data to remember">Data misi yang perlu kamu ingat</h2></header>
+    <div class="table-wrap">
+      <table>
+        <thead data-en="<tr><th>Concept</th><th>Key idea</th></tr>"><tr><th>Konsep</th><th>Inti</th></tr></thead>
+        <tbody data-en="<tr><td>Definition of work</td><td>Energy transferred by a force as the object is displaced. Conditions: a force, a displacement, and the force is not perpendicular to the displacement.</td></tr><tr><td>Formula</td><td class='mono'>W = F · s · cos θ   (unit joule, 1 J = 1 N·m, scalar)</td></tr><tr><td>Work by the resultant force</td><td class='mono'>W<sub>total</sub> = W<sub>1</sub> + W<sub>2</sub> + … = F<sub>R</sub> · s</td></tr><tr><td>Positive work</td><td><span class='pill pos'>θ &lt; 90°</span> the force gives energy to the object</td></tr><tr><td>Zero work</td><td><span class='pill zero'>θ = 90° or s = 0</span> that force transfers no energy</td></tr><tr><td>Negative work</td><td><span class='pill neg'>θ &gt; 90°</span> the force takes energy from the object</td></tr><tr><td>Work–energy theorem</td><td class='mono'>W<sub>total</sub> = ΔEk</td></tr>">
+          <tr><td>Definisi usaha</td><td>Energi yang dipindahkan oleh gaya saat benda berpindah. Syarat: ada gaya, ada perpindahan, gaya tidak tegak lurus perpindahan.</td></tr>
+          <tr><td>Rumus</td><td class="mono">W = F · s · cos θ   (satuan joule, 1 J = 1 N·m, besaran skalar)</td></tr>
+          <tr><td>Usaha oleh resultan gaya</td><td class="mono">W<sub>total</sub> = W<sub>1</sub> + W<sub>2</sub> + … = F<sub>R</sub> · s</td></tr>
+          <tr><td>Usaha positif</td><td><span class="pill pos">θ &lt; 90°</span> gaya memberi energi kepada benda</td></tr>
+          <tr><td>Usaha nol</td><td><span class="pill zero">θ = 90° atau s = 0</span> tidak ada perpindahan energi oleh gaya itu</td></tr>
+          <tr><td>Usaha negatif</td><td><span class="pill neg">θ &gt; 90°</span> gaya mengambil energi dari benda</td></tr>
+          <tr><td>Teorema usaha–energi</td><td class="mono">W<sub>total</sub> = ΔEk</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="row"><button class="btn primary" data-go="video" data-en="Continue to the Interactive Video">Lanjut ke Video Interaktif</button></div>
+  </article>
+</section>
+
+<!-- ================= VIDEO ================= -->
+<section class="view" id="v-video" hidden>
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <span class="eyebrow" data-en="Module 02 · Interactive Video">Modul 02 · Video Interaktif</span>
+    <h1 style="font-size:clamp(28px,4.5vw,40px)" data-en="Work in 102 seconds">Usaha dalam 102 detik</h1>
+    <p class="lead" data-en="The video stops at four points (diamonds on the timeline). Answer the question to continue. A correct answer on the first try earns 20 XP.">Video berhenti di empat titik (tanda belah ketupat pada garis waktu). Jawab pertanyaannya untuk melanjutkan. Jawaban benar pada percobaan pertama memberi 20 XP.</p>
+  </div>
+  <div class="player">
+    <div style="display:flex;flex-direction:column;gap:14px;min-width:0">
+      <div class="screen">
+        <canvas id="vcanvas" aria-label="Video"></canvas>
+        <span class="pausenote" id="vPauseNote" hidden data-en="Answer the question below">Jawab pertanyaan di bawah</span>
+        <div class="controls">
+          <button class="btn small primary" id="vPlay"></button>
+          <button class="btn small" id="vRestart" aria-label="↺">↺</button>
+          <div class="seekwrap"><input type="range" id="vSeek" min="0" max="102" step="0.1" value="0" aria-label="Video position"><div id="vMarkers"></div></div>
+          <span class="time" id="vTime">0:00 / 1:42</span>
+          <button class="btn small" id="vSpeed">1×</button>
+          <button class="btn small" id="vVoice" aria-pressed="false"></button>
+        </div>
+        <div class="caption" id="vCaption" aria-live="polite"></div>
+      </div>
+      <div id="vQuestion"></div>
+    </div>
+    <aside class="chapters" id="vChapters"></aside>
+  </div>
+</section>
+
+<!-- ================= SIMULASI ================= -->
+<section class="view" id="v-simulasi" hidden>
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <span class="eyebrow" data-en="Module 03 · Simulation">Modul 03 · Simulasi</span>
+    <h1 style="font-size:clamp(28px,4.5vw,40px)" data-en="Force and Displacement Lab">Lab Gaya dan Perpindahan</h1>
+    <p class="lead" data-en="Set the pulling force, its angle, friction, mass and initial speed. Run the simulation and watch the work done by each force and its type. The total work always equals the change in kinetic energy.">Atur gaya tarik, sudutnya, gaya gesek, massa, dan kecepatan awal. Jalankan simulasi, lalu amati usaha tiap gaya dan jenisnya. Usaha total selalu sama dengan perubahan energi kinetik.</p>
+  </div>
+  <div class="simgrid">
+    <div style="display:flex;flex-direction:column;gap:14px;min-width:0">
+      <div class="stage">
+        <canvas id="scanvas" aria-label="Simulation"></canvas>
+        <div class="stagebar">
+          <button class="btn small primary" id="sRun"></button>
+          <button class="btn small" id="sReset" data-en="↺ Reset">↺ Ulang</button>
+          <label class="small row" style="gap:6px"><input type="checkbox" id="sAll"> <span data-en="Show w and N">Tampilkan w dan N</span></label>
+          <button class="btn small" id="sSpeed" style="margin-left:auto"></button>
+        </div>
+        <p class="status" id="sStatus" aria-live="polite"></p>
+      </div>
+      <div class="panel" style="padding:0;overflow:hidden">
+        <div class="table-wrap" style="border:0;border-radius:0">
+          <table class="worktable">
+            <thead data-en="<tr><th>Force</th><th>Calculation</th><th class='num'>Work</th><th>Type</th><th style='min-width:110px'>Chart</th></tr>"><tr><th>Gaya</th><th>Perhitungan</th><th class="num">Usaha</th><th>Jenis</th><th style="min-width:110px">Grafik</th></tr></thead>
+            <tbody id="sTable"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="panel" style="display:flex;flex-direction:column;gap:10px">
+        <span class="eyebrow" data-en="Prediction challenge · +30 XP">Tantangan prediksi · +30 XP</span>
+        <p class="small" data-en="Calculate the total work before running the simulation. A prediction within 2% earns XP.">Hitung dulu usaha total sebelum menjalankan simulasi. Prediksi yang meleset kurang dari 2% memberi XP.</p>
+        <div class="predict"><label for="sPred" class="small" data-en="Predicted W<sub>total</sub> (J)">W<sub>total</sub> prediksi (J)</label><input id="sPred" inputmode="decimal" placeholder="mis. 160,3" data-en-ph="e.g. 160.3"><button class="btn small" id="sPredLock" data-en="Lock prediction">Kunci prediksi</button><span class="small" id="sPredMsg"></span></div>
+      </div>
+    </div>
+    <div class="panel ctl">
+      <div><span class="eyebrow" data-en="Scenario">Skenario</span>
+        <div class="presets" id="sPresets" style="margin-top:8px"></div>
+        <p class="small muted" id="sPresetNote" style="margin-top:8px"></p>
+      </div>
+      <div class="slider"><label for="iF"><span data-en="Pulling force F">Gaya tarik F</span> <output id="oF"></output></label><input type="range" id="iF" min="0" max="100" step="1"></div>
+      <div class="slider"><label for="iT"><span data-en="Angle θ to the floor">Sudut θ terhadap lantai</span> <output id="oT"></output></label><input type="range" id="iT" min="0" max="180" step="5"></div>
+      <div class="slider"><label for="iFr"><span data-en="Friction force f">Gaya gesek f</span> <output id="oFr"></output></label><input type="range" id="iFr" min="0" max="60" step="0.2"></div>
+      <div class="slider"><label for="iM"><span data-en="Mass m">Massa m</span> <output id="oM"></output></label><input type="range" id="iM" min="1" max="50" step="1"></div>
+      <div class="slider"><label for="iV"><span data-en="Initial speed v₀">Kecepatan awal v₀</span> <output id="oV"></output></label><input type="range" id="iV" min="0" max="10" step="0.5"></div>
+      <div class="slider"><label for="iS"><span data-en="Stop after s =">Berhenti setelah s =</span> <output id="oS"></output></label><input type="range" id="iS" min="1" max="10" step="0.5"></div>
+      <div id="sWarn" class="warn" hidden></div>
+      <p class="small muted" data-en="Model: level floor, g = 9.8 m/s². Kinetic friction is kept constant to focus on work. An object at rest stays at rest if the horizontal component of F does not exceed f.">Model: lantai datar, g = 9,8 m/s². Gaya gesek kinetis dibuat tetap agar fokus pada usaha. Benda diam tetap diam bila komponen mendatar F tidak melebihi f.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= GAMIFIKASI ================= -->
+<section class="view" id="v-gamifikasi" hidden>
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <span class="eyebrow" data-en="Module 04 · Gamification">Modul 04 · Gamifikasi</span>
+    <h1 style="font-size:clamp(28px,4.5vw,40px)" data-en="SIGMA Mission">Misi SIGMA</h1>
+    <p class="lead" data-en="Three levels, each with 3 lives. A wrong answer costs one life. Finish a level to unlock the next. Answer streaks earn bonus XP.">Tiga level, masing-masing dengan 3 nyawa. Jawaban salah mengurangi satu nyawa. Selesaikan level untuk membuka level berikutnya. Jawaban benar beruntun memberi bonus XP.</p>
+  </div>
+  <div id="gHub" style="display:flex;flex-direction:column;gap:22px">
+    <div class="levels" id="gLevels"></div>
+    <div id="gComplete"></div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <span class="eyebrow" data-en="Result card · screenshot it for your teacher">Kartu hasil · tangkap layar untuk gurumu</span>
+      <div class="idcard" id="gCard"></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <span class="eyebrow" data-en="Badges">Lencana</span>
+      <div class="badges" id="gBadges"></div>
+    </div>
+    <div class="row small muted"><button class="btn small" id="gUnlock" data-en="Teacher mode: unlock all levels">Mode guru: buka semua level</button></div>
+  </div>
+  <div id="gArena" hidden></div>
+</section>
+
+</main>
+<div id="toast" aria-live="polite"></div>
+
+<script>
+(function(){
+"use strict";
+/* ---------- helpers ---------- */
+const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s));
+const cssv=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+let LANG='id';
+const T=(id,en)=>LANG==='en'?en:id;
+const L=(o,k)=>(LANG==='en'&&o[k+'En']!==undefined)?o[k+'En']:o[k];
+const fmt=(n,d=1)=>{ if(Math.abs(n)<0.5*Math.pow(10,-d)) n=0; let s=Math.abs(n).toFixed(d); if(LANG!=='en') s=s.replace('.',','); return (n<0?'−':'')+s; };
+const fmtS=(n,d=1)=>(n>0.5*Math.pow(10,-d)?'+':'')+fmt(n,d);
+const parseNum=s=>{ if(s==null) return NaN; s=String(s).trim().replace(/\s/g,'').replace(/[−–]/g,'-').replace(/J$/i,''); if(/,\d{3}(,|$)/.test(s)&&!/\./.test(s)) s=s.replace(/,/g,''); else { s=s.replace(/\.(?=\d{3}(\D|$))/g,''); s=s.replace(',','.'); } return s===''?NaN:Number(s); };
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+/* ---------- progress state ---------- */
+const KEY='sigma-usaha-v1';
+const blank=()=>({xp:0,done:{},badges:{},lv:{1:0,2:0,3:0},unlockAll:false,student:null,lang:'id'});
+let S=blank();
+try{ const raw=localStorage.getItem(KEY); if(raw){ S=Object.assign(S,JSON.parse(raw)); } }catch(e){}
+LANG=S.lang==='en'?'en':'id';
+const save=()=>{ try{ localStorage.setItem(KEY,JSON.stringify(S)); }catch(e){} };
+const RANKS=[['Kadet','Cadet'],['Agen','Agent'],['Agen Senior','Senior Agent'],['Komandan','Commander'],['Master SIGMA','SIGMA Master']];
+const BADGES=[
+  {id:'konsep',seal:'L1',name:'Penjelas Konsep',nameEn:'Concept Explainer',how:'Selesaikan Level 1',howEn:'Finish Level 1'},
+  {id:'klasifikasi',seal:'L2',name:'Pembeda Usaha',nameEn:'Work Sorter',how:'Selesaikan Level 2',howEn:'Finish Level 2'},
+  {id:'resultan',seal:'L3',name:'Kalkulator Resultan',nameEn:'Resultant Calculator',how:'Selesaikan Level 3',howEn:'Finish Level 3'},
+  {id:'video',seal:'▶',name:'Penonton Aktif',nameEn:'Active Viewer',how:'Jawab 4 pertanyaan video',howEn:'Answer the 4 video questions'},
+  {id:'prediksi',seal:'≈',name:'Peramal Joule',nameEn:'Joule Forecaster',how:'Prediksi tepat di Simulasi',howEn:'Make an accurate prediction in the Simulation'},
+  {id:'sigma',seal:'Σ',name:'Agen SIGMA',nameEn:'SIGMA Agent',how:'Kumpulkan semua lencana lain',howEn:'Collect every other badge'}];
+function toast(msg){ const t=document.createElement('div'); t.className='toast'; t.textContent=msg; $('#toast').appendChild(t); setTimeout(()=>t.remove(),2600); }
+function award(id,pts,label){ if(S.done[id]) return false; S.done[id]=1; S.xp+=pts; save(); hud(); toast('+'+pts+' XP'+(label?' · '+label:'')); return true; }
+function giveBadge(id){ if(S.badges[id]) return; S.badges[id]=1; const b=BADGES.find(x=>x.id===id); toast(T('Lencana baru: ','New badge: ')+L(b,'name'));
+  if(id!=='sigma' && BADGES.filter(x=>x.id!=='sigma').every(x=>S.badges[x.id])){ S.badges.sigma=1; setTimeout(()=>toast(T('Lencana baru: Agen SIGMA','New badge: SIGMA Agent')),900); }
+  save(); hud(); renderHub(); }
+function hud(){ const lv=Math.floor(S.xp/100)+1; $('#xpNum').textContent=S.xp; $('#lvNum').textContent=lv; $('#rankName').textContent=RANKS[Math.min(RANKS.length-1,lv-1)][LANG==='en'?1:0];
+  $('#xpFill').style.width=(S.xp%100)+'%'; $('#badgeNum').textContent=BADGES.filter(b=>S.badges[b.id]).length+'/'+BADGES.length;
+  const st=S.student; $('#agentName').textContent=st?(T('Agen ','Agent ')+st.name+' · '+st.cls):T('Simulasi Gamifikasi · Usaha dan Gaya','Gamified Simulation · Work and Force');
+  $('#greet').textContent=st?T('Selamat datang, Agen '+st.name+' · Kelas '+st.cls,'Welcome, Agent '+st.name+' · Class '+st.cls):''; }
+
+/* ---------- static text translation ---------- */
+function applyStatic(){
+  $$('[data-en]').forEach(el=>{ if(el.dataset.idText===undefined) el.dataset.idText=el.innerHTML; el.innerHTML=LANG==='en'?el.dataset.en:el.dataset.idText; });
+  $$('[data-en-ph]').forEach(el=>{ if(el.dataset.idPh===undefined) el.dataset.idPh=el.placeholder; el.placeholder=LANG==='en'?el.dataset.enPh:el.dataset.idPh; });
+  $$('[data-lang]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.lang===LANG)));
+  document.documentElement.lang=LANG; document.title=T('SIGMA Usaha dan Gaya','SIGMA Work and Force');
+}
+function setLang(l){ if(l===LANG) { applyStatic(); return; } LANG=l; S.lang=l; save(); applyStatic(); hud(); mountChecks(); Video.relang(); Sim.relang(); renderHub(); if(run) renderQ(); }
+document.addEventListener('click',e=>{ const b=e.target.closest('[data-lang]'); if(b){ e.preventDefault(); setLang(b.dataset.lang); } });
+
+/* ---------- router ---------- */
+const VIEWS=['masuk','beranda','materi','video','simulasi','gamifikasi'];
+function show(name){ if(!S.student) name='masuk'; else if(!VIEWS.includes(name)||name==='masuk') name='beranda';
+  VIEWS.forEach(v=>{ $('#v-'+v).hidden=(v!==name); });
+  $('#tabRow').hidden=(name==='masuk');
+  $$('.tab').forEach(t=>t.setAttribute('aria-current',t.dataset.go===name?'page':'false'));
+  if(name!=='video') Video.pause();
+  if(name==='video') Video.resize();
+  if(name==='simulasi') Sim.resize();
+  if(name==='gamifikasi') renderHub();
+  if(name==='masuk') setTimeout(()=>{ const i=$('#inName'); if(i) i.focus(); },50);
+}
+function go(name){ if(location.hash!=='#'+name){ try{ location.hash=name; }catch(e){ show(name);} } else show(name); window.scrollTo({top:0}); }
+document.addEventListener('click',e=>{ const b=e.target.closest('[data-go]'); if(b){ e.preventDefault(); go(b.dataset.go); }
+  const a=e.target.closest('[data-scroll]'); if(a){ e.preventDefault(); const el=document.getElementById(a.dataset.scroll); if(el) el.scrollIntoView({behavior:'smooth',block:'start'}); } });
+window.addEventListener('hashchange',()=>show(location.hash.slice(1)));
+
+/* ---------- sign-in ---------- */
+$('#signinForm').addEventListener('submit',e=>{ e.preventDefault(); const n=$('#inName').value.trim().replace(/\s+/g,' '), c=$('#inClass').value.trim().replace(/\s+/g,' ');
+  $('#errName').hidden=n.length>=2; $('#errClass').hidden=c.length>=1; if(n.length<2){ $('#inName').focus(); return; } if(!c){ $('#inClass').focus(); return; }
+  S.student={name:n,cls:c,since:new Date().toISOString()}; save(); hud(); toast(T('Selamat bertugas, Agen ','Good luck, Agent ')+n); go('beranda'); });
+$('#inName').addEventListener('input',()=>{ $('#errName').hidden=true; }); $('#inClass').addEventListener('input',()=>{ $('#errClass').hidden=true; });
+$('#switchStudent').addEventListener('click',()=>{ $('#switchConfirm').hidden=false; });
+$('#switchNo').addEventListener('click',()=>{ $('#switchConfirm').hidden=true; });
+$('#switchYes').addEventListener('click',()=>{ const lang=S.lang; S=blank(); S.lang=lang; save(); $('#switchConfirm').hidden=true; $('#inName').value=''; $('#inClass').value=''; Video.reset(); hud(); go('masuk'); });
+
+/* ---------- reusable multiple-choice ---------- */
+function mountMC(el,q,opts={}){
+  el.innerHTML=(opts.label?'<span class="eyebrow">'+opts.label+'</span>':'')+'<p class="q">'+L(q,'q')+'</p><div class="opts"></div><div class="fbslot"></div>';
+  const box=el.querySelector('.opts'); let tries=0, finished=false; const O=L(q,'o');
+  const order=q.keep?O.map((t,i)=>i):shuffle(O.map((t,i)=>i));
+  order.forEach(i=>{ const b=document.createElement('button'); b.className='opt'; b.innerHTML=O[i]; b.dataset.i=i; box.appendChild(b); });
+  box.addEventListener('click',e=>{ const b=e.target.closest('.opt'); if(!b||finished||b.disabled) return; tries++;
+    const ok=Number(b.dataset.i)===q.a; const slot=el.querySelector('.fbslot');
+    if(ok){ b.classList.add('ok'); finished=true; box.querySelectorAll('.opt').forEach(x=>x.disabled=true);
+      slot.innerHTML='<div class="fb ok"><b>'+T('Benar.','Correct.')+'</b> '+L(q,'e')+'</div>'; if(opts.onDone) opts.onDone(tries===1); }
+    else { b.classList.add('no'); b.disabled=true; slot.innerHTML='<div class="fb no"><b>'+T('Belum tepat.','Not quite.')+'</b> '+(L(q,'h')||T('Coba lagi.','Try again.'))+'</div>';
+      if(tries>=2){ finished=true; box.querySelectorAll('.opt').forEach(x=>{x.disabled=true; if(Number(x.dataset.i)===q.a) x.classList.add('ok');});
+        slot.innerHTML='<div class="fb no"><b>'+T('Jawaban yang benar sudah ditandai.','The correct answer is marked.')+'</b> '+L(q,'e')+'</div>'; if(opts.onDone) opts.onDone(false); } } });
+}
+const MCHECK={
+  m1:{q:'Cek pemahaman: Seorang siswa menahan ransel 50 N diam di atas kepala selama 2 menit. Berapa usaha yang ia lakukan pada ransel?',qEn:'Quick check: A student holds a 50 N backpack still above their head for 2 minutes. How much work do they do on the backpack?',o:['0 J','100 J','6000 J','50 J'],a:0,h:'Periksa syarat usaha: apakah ransel berpindah?',hEn:'Check the conditions for work: does the backpack move?',e:'Ransel tidak berpindah (s = 0), sehingga W = F · 0 = 0 J, walaupun siswa merasa lelah.',eEn:'The backpack does not move (s = 0), so W = F · 0 = 0 J, even though the student gets tired.'},
+  m2:{q:'Cek pemahaman: Lemari didorong 80 N ke kanan, gaya gesek 30 N, lemari berpindah 3 m ke kanan. Usaha totalnya?',qEn:'Quick check: A cupboard is pushed 80 N to the right, friction is 30 N, and it moves 3 m to the right. What is the total work?',o:['150 J','330 J','240 J','90 J'],a:0,h:'Cari resultan gaya dulu: F<sub>R</sub> = 80 − 30.',hEn:'Find the resultant force first: F<sub>R</sub> = 80 − 30.',e:'F<sub>R</sub> = 80 − 30 = 50 N, W<sub>total</sub> = 50 × 3 = 150 J. Cara lain: 240 J + (−90 J) = 150 J.',eEn:'F<sub>R</sub> = 80 − 30 = 50 N, W<sub>total</sub> = 50 × 3 = 150 J. Or: 240 J + (−90 J) = 150 J.'},
+  m3:{q:'Cek pemahaman: Sebuah satelit bergerak melingkar beraturan mengelilingi Bumi. Usaha oleh gaya gravitasi Bumi pada satelit adalah…',qEn:'Quick check: A satellite moves in uniform circular motion around the Earth. The work done by Earth’s gravity on the satellite is…',o:['Nol','Positif','Negatif'],oEn:['Zero','Positive','Negative'],a:0,h:'Bandingkan arah gaya gravitasi (ke pusat) dengan arah gerak satelit (menyinggung lintasan).',hEn:'Compare the direction of gravity (towards the centre) with the satellite’s motion (along the path).',e:'Gaya gravitasi selalu tegak lurus arah gerak (θ = 90°), jadi usahanya nol dan kelajuan satelit tetap.',eEn:'Gravity is always perpendicular to the motion (θ = 90°), so it does zero work and the satellite’s speed stays constant.'}};
+function mountChecks(){ $$('[data-mc]').forEach(el=>{ const id=el.dataset.mc; mountMC(el,MCHECK[id],{onDone:first=>{ if(first) award('mat-'+id,10,T('Cek pemahaman','Quick check')); }}); }); }
+
+/* ---------- canvas helpers ---------- */
+function arrow(c,x1,y1,x2,y2,col,w=4,head=14,dash){ const a=Math.atan2(y2-y1,x2-x1), Ln=Math.hypot(x2-x1,y2-y1); if(Ln<2) return;
+  c.save(); c.strokeStyle=col; c.fillStyle=col; c.lineWidth=w; c.lineCap='round'; if(dash) c.setLineDash(dash);
+  const h=Math.min(head,Ln*0.6), hx=x2-Math.cos(a)*h, hy=y2-Math.sin(a)*h;
+  c.beginPath(); c.moveTo(x1,y1); c.lineTo(hx,hy); c.stroke(); c.setLineDash([]);
+  c.beginPath(); c.moveTo(x2,y2); c.lineTo(x2-h*Math.cos(a-0.45),y2-h*Math.sin(a-0.45)); c.lineTo(x2-h*Math.cos(a+0.45),y2-h*Math.sin(a+0.45)); c.closePath(); c.fill(); c.restore(); }
+function text(c,s,x,y,col,size=16,align='left',weight='600',font){ c.save(); c.fillStyle=col; c.font=weight+' '+size+'px '+(font||cssv('--f-mono')); c.textAlign=align; c.textBaseline='middle'; c.fillText(s,x,y); c.restore(); }
+function rrect(c,x,y,w,h,r,fill,stroke,lw=2){ c.save(); c.beginPath(); c.moveTo(x+r,y); c.arcTo(x+w,y,x+w,y+h,r); c.arcTo(x+w,y+h,x,y+h,r); c.arcTo(x,y+h,x,y,r); c.arcTo(x,y,x+w,y,r); c.closePath(); if(fill){c.fillStyle=fill;c.fill();} if(stroke){c.strokeStyle=stroke;c.lineWidth=lw;c.stroke();} c.restore(); }
+function crate(c,x,y,w,h,P){ rrect(c,x,y,w,h,4,P.surface2,P.ink,2.5); c.save(); c.strokeStyle=P.line; c.lineWidth=2; c.beginPath(); c.moveTo(x+6,y+6); c.lineTo(x+w-6,y+h-6); c.moveTo(x+w-6,y+6); c.lineTo(x+6,y+h-6); c.stroke(); c.restore(); }
+function palette(){ return {surface:cssv('--surface'),surface2:cssv('--surface-2'),ink:cssv('--ink'),muted:cssv('--muted'),line:cssv('--line'),grid:cssv('--grid'),accent:cssv('--accent'),vf:cssv('--vf'),vfr:cssv('--vfric'),vz:cssv('--vzero'),vs:cssv('--vs')}; }
+function person(c,hx,hy,P,lean=0.35,carry){
+  const footY=hy+95, hipX=hx-70, hipY=footY-58, shX=hipX+Math.sin(lean)*55, shY=hipY-Math.cos(lean)*55;
+  c.save(); c.strokeStyle=P.ink; c.lineWidth=4; c.lineCap='round'; c.lineJoin='round';
+  c.beginPath(); c.arc(shX+8*Math.sin(lean),shY-20,13,0,Math.PI*2); c.stroke();
+  c.beginPath(); c.moveTo(hipX,hipY); c.lineTo(shX,shY); c.stroke();
+  c.beginPath(); c.moveTo(shX,shY+4); c.lineTo(carry?shX+18:hx-12,carry?shY+30:hy-4); c.lineTo(hx,hy); c.stroke();
+  c.beginPath(); c.moveTo(hipX,hipY); c.lineTo(hipX-22,footY); c.moveTo(hipX,hipY); c.lineTo(hipX+18,footY-28); c.lineTo(hipX+10,footY); c.stroke(); c.restore(); }
+function grid(c,w,h,P,step=40){ c.save(); c.fillStyle=P.surface; c.fillRect(0,0,w,h); c.strokeStyle=P.grid; c.lineWidth=1; c.beginPath(); for(let x=0;x<=w;x+=step){c.moveTo(x+.5,0);c.lineTo(x+.5,h);} for(let y=0;y<=h;y+=step){c.moveTo(0,y+.5);c.lineTo(w,y+.5);} c.stroke(); c.restore(); }
+const ease=t=>t<0?0:t>1?1:t*t*(3-2*t);
+const clamp01=t=>t<0?0:t>1?1:t;
+
+/* =================== VIDEO =================== */
+const Video=(function(){
+  const cv=$('#vcanvas'), ctx=cv.getContext('2d'); const VW=960, VH=540, Tt=102;
+  let t=0, playing=false, last=0, speed=1, voice=false, lastCap=-1, pendingQ=null, raf=0;
+  let answered={};
+  const CH=[
+    {t:0,end:10,title:'Apa itu usaha?',titleEn:'What is work?'},{t:10,end:27,title:'Gaya searah perpindahan',titleEn:'Force along the displacement'},{t:27,end:49,title:'Gaya membentuk sudut',titleEn:'Force at an angle'},
+    {t:49,end:70,title:'Positif, nol, negatif',titleEn:'Positive, zero, negative'},{t:70,end:92,title:'Usaha oleh resultan gaya',titleEn:'Work by the resultant force'},{t:92,end:102,title:'Rangkuman',titleEn:'Summary'}];
+  const CAP=[
+    [0,5,'Dalam fisika, usaha bukan sekadar bekerja keras atau merasa lelah.','In physics, work is not just working hard or feeling tired.'],
+    [5,10,'Mendorong tembok: ada gaya, tetapi tembok tidak berpindah. Perpindahan nol, jadi usaha pada tembok juga nol.','Pushing a wall: there is a force, but the wall does not move. The displacement is zero, so the work done on the wall is zero.'],
+    [10,15,'Sekarang kotak didorong dengan gaya 20 newton, searah dengan arah geraknya.','Now a box is pushed with a force of 20 newtons, in the direction it moves.'],
+    [15,22,'Kotak berpindah sejauh 5 meter. Gaya dan perpindahan searah.','The box moves 5 metres. The force and the displacement point the same way.'],
+    [22,27,'Usaha sama dengan gaya kali perpindahan: 20 newton kali 5 meter, hasilnya 100 joule.','Work equals force times displacement: 20 newtons times 5 metres gives 100 joules.'],
+    [27,36,'Bagaimana jika gaya ditarik miring? Gaya kita uraikan menjadi dua komponen.','What if the force pulls at an angle? We split the force into two components.'],
+    [36,42,'Hanya komponen F cos theta yang searah perpindahan. Komponen F sin theta tegak lurus, sehingga tidak melakukan usaha.','Only the component F cos theta lies along the displacement. The component F sin theta is perpendicular, so it does no work.'],
+    [42,49,'Koper ditarik 50 newton dengan sudut 60 derajat sejauh 10 meter. Usahanya 50 kali 10 kali cos 60, yaitu 250 joule.','A suitcase is pulled with 50 newtons at 60 degrees for 10 metres. The work is 50 times 10 times cos 60, which is 250 joules.'],
+    [49,55,'Jika gaya searah perpindahan, sudutnya di bawah 90 derajat, cos theta positif. Usahanya positif.','If the force is along the displacement, the angle is below 90 degrees and cos theta is positive. The work is positive.'],
+    [55,61,'Jika gaya tegak lurus perpindahan, seperti gaya angkat pada tas yang dibawa berjalan, cos 90 sama dengan nol. Usahanya nol.','If the force is perpendicular to the displacement, like the lifting force on a bag carried while walking, cos 90 equals zero. The work is zero.'],
+    [61,67,'Jika gaya berlawanan arah perpindahan, seperti gaya rem, cos 180 sama dengan minus satu. Usahanya negatif.','If the force is opposite to the displacement, like a braking force, cos 180 equals minus one. The work is negative.'],
+    [67,70,'Jadi, tanda usaha ditentukan oleh sudut antara gaya dan perpindahan.','So the sign of the work is set by the angle between the force and the displacement.'],
+    [70,76,'Benda biasanya dikenai beberapa gaya. Di sini gaya tarik 30 newton ke kanan dan gaya gesek 10 newton ke kiri.','Objects usually feel several forces. Here there is a 30 newton pull to the right and 10 newtons of friction to the left.'],
+    [76,84,'Resultan gayanya 30 dikurangi 10, yaitu 20 newton ke kanan. Kotak berpindah 4 meter.','The resultant force is 30 minus 10, which is 20 newtons to the right. The box moves 4 metres.'],
+    [84,92,'Cara pertama: jumlahkan usaha tiap gaya, 120 joule ditambah minus 40 joule. Cara kedua: resultan gaya kali perpindahan. Keduanya 80 joule.','Method one: add the work of each force, 120 joules plus minus 40 joules. Method two: resultant force times displacement. Both give 80 joules.'],
+    [92,102,'Rangkuman: W sama dengan F kali s kali cos theta. Usaha total adalah jumlah usaha semua gaya, atau resultan gaya kali perpindahan.','Summary: W equals F times s times cos theta. Total work is the sum of the work of all forces, or the resultant force times the displacement.']];
+  const QS=[
+    {t:26.9,id:'v1',q:'Jika gaya dorong menjadi 30 N searah gerak dan kotak berpindah 4 m, berapa usahanya?',qEn:'If the push becomes 30 N along the motion and the box moves 4 m, how much work is done?',o:['120 J','34 J','7,5 J','26 J'],oEn:['120 J','34 J','7.5 J','26 J'],a:0,h:'Gaya searah perpindahan: W = F × s.',hEn:'The force is along the displacement: W = F × s.',e:'W = 30 N × 4 m = 120 J.',eEn:'W = 30 N × 4 m = 120 J.'},
+    {t:48.9,id:'v2',q:'Gaya 40 N menarik kotak dengan sudut 60° terhadap lantai. Kotak berpindah 5 m. Berapa usaha gaya tarik?',qEn:'A 40 N force pulls a box at 60° to the floor. The box moves 5 m. How much work does the pull do?',o:['100 J','200 J','173 J','45 J'],a:0,h:'Gunakan W = F · s · cos θ dengan cos 60° = 0,5.',hEn:'Use W = F · s · cos θ with cos 60° = 0.5.',e:'W = 40 × 5 × 0,5 = 100 J. Hanya komponen F cos 60° = 20 N yang searah perpindahan.',eEn:'W = 40 × 5 × 0.5 = 100 J. Only the component F cos 60° = 20 N lies along the displacement.'},
+    {t:69.9,id:'v3',q:'Bola dilempar vertikal ke atas. Selama bola naik, usaha oleh gaya berat bola bernilai…',qEn:'A ball is thrown straight up. While the ball is rising, the work done by its weight is…',o:['Negatif','Positif','Nol'],oEn:['Negative','Positive','Zero'],a:0,h:'Gaya berat ke bawah, perpindahan bola ke atas. Berapa sudutnya?',hEn:'Weight points down, the ball moves up. What is the angle?',e:'Sudut antara gaya berat dan perpindahan 180°, cos 180° = −1, jadi usahanya negatif dan bola melambat.',eEn:'The angle between weight and displacement is 180°, cos 180° = −1, so the work is negative and the ball slows down.'},
+    {t:91.9,id:'v4',q:'Balok ditarik 50 N ke kanan, gaya gesek 15 N, balok berpindah 2 m ke kanan. Berapa usaha total?',qEn:'A block is pulled 50 N to the right, friction is 15 N, and it moves 2 m to the right. What is the total work?',o:['70 J','130 J','100 J','35 J'],a:0,h:'F<sub>R</sub> = 50 − 15.',hEn:'F<sub>R</sub> = 50 − 15.',e:'F<sub>R</sub> = 35 N, W<sub>total</sub> = 35 × 2 = 70 J. Atau 100 J + (−30 J) = 70 J.',eEn:'F<sub>R</sub> = 35 N, W<sub>total</sub> = 35 × 2 = 70 J. Or 100 J + (−30 J) = 70 J.'}];
+
+  function mmss(s){ s=Math.max(0,Math.floor(s)); return Math.floor(s/60)+':'+String(s%60).padStart(2,'0'); }
+  function buildChapters(){ $('#vChapters').innerHTML='<span class="eyebrow">'+T('Bab video','Video chapters')+'</span>'+CH.map((c,i)=>'<button data-ch="'+i+'"><span class="tm">'+mmss(c.t)+'</span><span>'+L(c,'title')+'</span></button>').join(''); }
+  $('#vChapters').addEventListener('click',e=>{ const b=e.target.closest('[data-ch]'); if(!b) return; seek(CH[Number(b.dataset.ch)].t+0.01); });
+  function drawMarkers(){ $('#vMarkers').innerHTML=QS.map(q=>'<span class="marker'+(answered[q.id]?' done':'')+'" style="left:'+(q.t/Tt*100)+'%"></span>').join(''); }
+  function maxReach(){ const q=QS.find(q=>!answered[q.id]); return q?q.t:Tt; }
+  function seek(nt){ nt=Math.max(0,Math.min(nt,maxReach())); t=nt; if(pendingQ && t<pendingQ.t) clearQ(); draw(); ui(); }
+  function labels(){ $('#vPlay').textContent=playing?T('⏸ Jeda','⏸ Pause'):T('▶ Putar','▶ Play'); $('#vVoice').textContent=(voice?'🔊 ':'🔈 ')+T('Narasi','Narration'); }
+  function setPlay(p){ playing=p; labels();
+    if(p){ last=performance.now(); cancelAnimationFrame(raf); raf=requestAnimationFrame(loop); } else { try{ speechSynthesis.cancel(); }catch(e){} } }
+  function loop(now){ if(!playing) return; const dt=Math.min(0.1,(now-last)/1000)*speed; last=now; let nt=t+dt;
+    const q=QS.find(q=>!answered[q.id] && t<=q.t && nt>=q.t);
+    if(q){ t=q.t; draw(); ui(); setPlay(false); askQ(q); return; }
+    if(nt>=Tt){ t=Tt; draw(); ui(); setPlay(false); return; }
+    t=nt; draw(); ui(); raf=requestAnimationFrame(loop); }
+  function ui(){ $('#vSeek').value=t; $('#vTime').textContent=mmss(t)+' / '+mmss(Tt);
+    const ci=CAP.findIndex(c=>t>=c[0]&&t<c[1]); const chi=CH.findIndex(c=>t>=c.t&&t<c.end); const k=chi<0?CH.length-1:chi;
+    $$('#vChapters [data-ch]').forEach((b,i)=>b.classList.toggle('on',i===k));
+    const capText=ci>=0?CAP[ci][LANG==='en'?3:2]:(t>=Tt?T('Video selesai. Lanjutkan ke Simulasi untuk mencoba sendiri.','The video is over. Go to the Simulation to try it yourself.'):'');
+    $('#vCaption').innerHTML='<b>'+L(CH[k],'title')+'</b>'+capText;
+    if(ci!==lastCap){ lastCap=ci; if(voice&&playing&&ci>=0) speak(capText); } }
+  function speak(s){ try{ speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(s); u.lang=LANG==='en'?'en-US':'id-ID'; u.rate=1.05; const re=LANG==='en'?/^en/i:/^id/i; const v=speechSynthesis.getVoices().find(v=>re.test(v.lang)); if(v) u.voice=v; speechSynthesis.speak(u); }catch(e){} }
+  function idle(){ $('#vQuestion').innerHTML='<div class="vq-idle">'+T('Pertanyaan akan muncul di sini saat video berhenti.','Questions appear here when the video stops.')+'</div>'; }
+  function askQ(q){ pendingQ=q; $('#vPauseNote').hidden=false; const box=$('#vQuestion'); box.innerHTML='<div class="vq"></div>'; const el=box.firstChild;
+    mountMC(el,q,{label:T('Titik henti ','Checkpoint ')+(QS.indexOf(q)+1)+T(' dari 4',' of 4'),onDone:first=>{ answered[q.id]=1; drawMarkers(); if(first) award(q.id,20,'Video');
+      if(QS.every(x=>answered[x.id])) giveBadge('video');
+      const b=document.createElement('button'); b.className='btn primary'; b.textContent=T('▶ Lanjutkan video','▶ Continue the video'); b.addEventListener('click',()=>{ clearQ(); t+=0.05; setPlay(true); }); el.appendChild(b); b.focus(); }});
+    el.scrollIntoView({behavior:'smooth',block:'nearest'}); }
+  function clearQ(){ pendingQ=null; $('#vPauseNote').hidden=true; idle(); }
+
+  $('#vPlay').addEventListener('click',()=>{ if(pendingQ && !answered[pendingQ.id]) return; if(t>=Tt) t=0; setPlay(!playing); });
+  $('#vRestart').addEventListener('click',()=>{ setPlay(false); clearQ(); t=0; lastCap=-1; draw(); ui(); });
+  $('#vSeek').addEventListener('input',e=>{ seek(Number(e.target.value)); });
+  $('#vSpeed').addEventListener('click',e=>{ speed=speed===1?1.5:speed===1.5?0.75:1; e.target.textContent=fmt(speed,speed%1?(speed===0.75?2:1):0)+'×'; });
+  $('#vVoice').addEventListener('click',e=>{ voice=!voice; e.target.setAttribute('aria-pressed',voice); labels(); if(!voice){ try{speechSynthesis.cancel();}catch(_){} } else { lastCap=-1; ui(); } });
+
+  function resize(){ const r=cv.getBoundingClientRect(); if(!r.width) return; const dpr=Math.min(2,window.devicePixelRatio||1); cv.width=Math.round(r.width*dpr); cv.height=Math.round(r.width*9/16*dpr); draw(); }
+
+  function draw(){ if(!cv.width) return; const s=cv.width/VW; ctx.setTransform(s,0,0,s,0,0); const P=palette(); grid(ctx,VW,VH,P,40);
+    const GY=430, DF=cssv('--f-display');
+    const sc=CH.findIndex(c=>t>=c.t&&t<c.end); const k=sc<0?5:sc; const u=t-CH[k].t;
+    ctx.save();
+    if(k!==5 && k!==3){ ctx.strokeStyle=P.ink; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(40,GY); ctx.lineTo(920,GY); ctx.stroke(); }
+    if(k===0){
+      const a=clamp01(u/1.2); ctx.globalAlpha=a; text(ctx,T('USAHA','WORK'),480,110,P.accent,72,'center','700',DF); text(ctx,T('W = energi yang dipindahkan oleh gaya','W = energy transferred by a force'),480,170,P.muted,24,'center','500'); ctx.globalAlpha=1;
+      if(u>2.5){ ctx.globalAlpha=clamp01((u-2.5)/1);
+        rrect(ctx,600,240,46,190,2,P.surface2,P.ink,2.5); for(let y=252;y<430;y+=24){ ctx.strokeStyle=P.line; ctx.lineWidth=1.5; ctx.beginPath(); ctx.moveTo(600,y); ctx.lineTo(646,y); ctx.stroke(); }
+        person(ctx,596,335,P,0.6); arrow(ctx,500,215,596,215,P.vf,5,16); text(ctx,'F',548,192,P.vf,24,'center'); ctx.globalAlpha=1; }
+      if(u>5){ ctx.globalAlpha=clamp01((u-5)/0.8); rrect(ctx,690,250,230,120,10,P.surface,P.vfr,2.5); text(ctx,'s = 0',805,290,P.vfr,32,'center','700'); text(ctx,'W = F × 0 = 0 J',805,335,P.ink,22,'center'); ctx.globalAlpha=1;
+        text(ctx,T('Rasa lelah ≠ usaha','Feeling tired ≠ work'),300,480,P.muted,22,'center','600'); }
+    }
+    if(k===1){
+      const ppm=80, x0=170, BW=110, BH=90; const prog=ease((u-2)/10); const xb=x0+prog*5*ppm;
+      for(let m=0;m<=6;m++){ const x=x0+BW/2+m*ppm; ctx.strokeStyle=P.muted; ctx.lineWidth=1.5; ctx.beginPath(); ctx.moveTo(x,GY); ctx.lineTo(x,GY+10); ctx.stroke(); text(ctx,m+' m',x,GY+24,P.muted,15,'center','400'); }
+      crate(ctx,xb,GY-BH,BW,BH,P); arrow(ctx,xb-130,GY-BH/2,xb-4,GY-BH/2,P.vf,6,18); text(ctx,'F = 20 N',xb-70,GY-BH/2-26,P.vf,22,'center');
+      const sm=prog*5; if(sm>0.05){ arrow(ctx,x0+BW/2,GY+50,x0+BW/2+sm*ppm,GY+50,P.vs,4,14); } text(ctx,'s = '+fmt(sm,1)+' m',x0+BW/2+Math.max(sm*ppm,60)/2,GY+78,P.vs,20,'center');
+      text(ctx,T('Gaya searah perpindahan (θ = 0°)','Force along the displacement (θ = 0°)'),480,60,P.ink,26,'center','600',DF);
+      if(u>12){ ctx.globalAlpha=clamp01((u-12)/0.8); rrect(ctx,250,100,460,110,10,P.surface,P.accent,2.5); text(ctx,'W = F × s',480,135,P.ink,28,'center'); text(ctx,'= 20 N × 5 m = 100 J',480,178,P.accent,28,'center','700'); ctx.globalAlpha=1; }
+    }
+    if(k===2){
+      text(ctx,T('Gaya membentuk sudut θ','Force at an angle θ'),480,60,P.ink,26,'center','600',DF);
+      const th=(u<1.5?0:u<8?ease((u-1.5)/6.5)*60:60)*Math.PI/180; const ppm=50; const prog=u<14?0:ease((u-14)/7); const xb=120+prog*10*ppm*0.9;
+      const BW=90,BH=80, cx=xb+BW, cy=GY-BH/2, Lf=200;
+      crate(ctx,xb,GY-BH,BW,BH,P);
+      const ex=cx+Lf*Math.cos(th), ey=cy-Lf*Math.sin(th);
+      arrow(ctx,cx,cy,ex,cy,P.vf,3,12,[9,6]); if(th>0.05) arrow(ctx,ex,cy,ex,ey,P.vz,3,12,[9,6]);
+      arrow(ctx,cx,cy,ex,ey,P.vf,6,18);
+      if(th>0.05){ ctx.strokeStyle=P.ink; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(cx,cy,42,-th,0); ctx.stroke(); text(ctx,'θ',cx+50,cy-14,P.ink,18,'left'); }
+      text(ctx,'θ = '+Math.round(th*180/Math.PI)+'°',60,110,P.ink,22,'left','700');
+      text(ctx,'F',cx+Lf*0.55*Math.cos(th)-14,cy-Lf*0.55*Math.sin(th)-18,P.vf,24,'center','700');
+      if(u>8){ text(ctx,'F cos θ',(cx+ex)/2,cy+24,P.vf,18,'center'); if(th>0.05) text(ctx,'F sin θ',ex+12,(cy+ey)/2,P.vz,18,'left'); }
+      if(u>8 && u<14){ ctx.globalAlpha=clamp01((u-8)/0.8); rrect(ctx,560,110,360,110,10,P.surface,P.accent,2.5); text(ctx,'W = F · s · cos θ',740,145,P.accent,28,'center','700'); text(ctx,T('hanya F cos θ yang berusaha','only F cos θ does work'),740,185,P.muted,18,'center','500'); ctx.globalAlpha=1; }
+      if(u>=14){ if(prog>0.01) arrow(ctx,120,GY+50,xb,GY+50,P.vs,4,14); text(ctx,'s = '+fmt(prog*10,1)+' m',120+Math.max(xb-120,80)/2+20,GY+78,P.vs,20,'center');
+        rrect(ctx,520,100,410,120,10,P.surface,P.accent,2.5); text(ctx,'F = 50 N · s = 10 m · θ = 60°',725,135,P.ink,19,'center','500'); text(ctx,'W = 50 × 10 × '+fmt(0.5,1)+' = 250 J',725,180,P.accent,26,'center','700'); }
+    }
+    if(k===3){
+      text(ctx,T('Tanda usaha ditentukan oleh sudut θ','The sign of work is set by the angle θ'),480,48,P.ink,26,'center','600',DF);
+      const panels=[{x:20,c:P.vf,t0:0,name:T('USAHA POSITIF','POSITIVE WORK'),ang:'θ = 0°',cos:'cos θ = +1'},{x:330,c:P.vz,t0:6,name:T('USAHA NOL','ZERO WORK'),ang:'θ = 90°',cos:'cos θ = 0'},{x:640,c:P.vfr,t0:12,name:T('USAHA NEGATIF','NEGATIVE WORK'),ang:'θ = 180°',cos:'cos θ = −1'}];
+      panels.forEach((p,i)=>{ if(u<p.t0) return; ctx.globalAlpha=clamp01((u-p.t0)/0.8); const W=300,H=400,y=80;
+        rrect(ctx,p.x,y,W,H,12,P.surface,p.c,3); text(ctx,p.name,p.x+W/2,y+34,p.c,22,'center','700',DF);
+        const gy=y+250; ctx.strokeStyle=P.ink; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(p.x+20,gy); ctx.lineTo(p.x+W-20,gy); ctx.stroke();
+        const mv=clamp01((u-p.t0-1)/4)*70;
+        if(i===0){ crate(ctx,p.x+60+mv,gy-60,70,60,P); arrow(ctx,p.x+60+mv+35,gy-30,p.x+60+mv+140,gy-30,P.vf,5,15); text(ctx,'F',p.x+60+mv+120,gy-52,P.vf,20,'center'); }
+        if(i===1){ const hx=p.x+150+mv*0.8, hy=gy-82; person(ctx,hx,hy,P,0.05,true); rrect(ctx,hx-6,hy,36,34,4,P.surface2,P.ink,2); arrow(ctx,hx+12,hy+8,hx+12,hy-60,P.vz,5,15); text(ctx,'F',hx+30,hy-46,P.vz,20,'left'); }
+        if(i===2){ const cx=p.x+50+mv*0.6, cy=gy-26; rrect(ctx,cx,cy-30,130,34,10,P.surface2,P.ink,2.5); rrect(ctx,cx+25,cy-52,70,24,8,P.surface2,P.ink,2.5); ctx.fillStyle=P.ink; [cx+28,cx+102].forEach(x=>{ctx.beginPath();ctx.arc(x,cy+8,13,0,Math.PI*2);ctx.fill();});
+          arrow(ctx,cx+10,cy-6,cx-70,cy-6,P.vfr,5,15); text(ctx,'f',cx-50,cy-28,P.vfr,20,'center'); }
+        arrow(ctx,p.x+60,gy+40,p.x+W-50,gy+40,P.vs,4,14); text(ctx,'s',p.x+W-40,gy+22,P.vs,20,'center');
+        text(ctx,p.ang+'   '+p.cos,p.x+W/2,y+H-32,P.ink,19,'center','600'); ctx.globalAlpha=1; });
+    }
+    if(k===4){
+      text(ctx,T('Usaha oleh resultan gaya','Work by the resultant force'),480,48,P.ink,26,'center','600',DF);
+      const ppm=90, x0=180, BW=110, BH=90; const prog=u<6?0:ease((u-6)/8); const xb=x0+prog*4*ppm; const cy=GY-BH/2;
+      crate(ctx,xb,GY-BH,BW,BH,P); arrow(ctx,xb+BW,cy,xb+BW+150,cy,P.vf,6,18); text(ctx,'F = 30 N',xb+BW+80,cy-26,P.vf,20,'center');
+      arrow(ctx,xb,cy+20,xb-55,cy+20,P.vfr,6,16); text(ctx,'f = 10 N',xb-40,cy-6,P.vfr,20,'center');
+      if(u>2){ ctx.globalAlpha=clamp01((u-2)/0.8); arrow(ctx,xb+BW/2-50,GY-BH-36,xb+BW/2+50,GY-BH-36,P.accent,6,16); text(ctx,'ΣF = 30 − 10 = 20 N',xb+BW/2,GY-BH-66,P.accent,20,'center','700'); ctx.globalAlpha=1; }
+      if(prog>0.01){ arrow(ctx,x0+BW/2,GY+50,x0+BW/2+prog*4*ppm,GY+50,P.vs,4,14); } text(ctx,'s = '+fmt(prog*4,1)+' m',x0+BW/2+Math.max(prog*4*ppm,80)/2,GY+78,P.vs,20,'center');
+      if(u>14){ ctx.globalAlpha=clamp01((u-14)/0.8); rrect(ctx,40,90,880,150,10,P.surface,P.accent,2.5);
+        text(ctx,T('Cara 1:  W tarik = 30 × 4 = +120 J   W gesek = −10 × 4 = −40 J   → 80 J','Method 1:  W pull = 30 × 4 = +120 J   W friction = −10 × 4 = −40 J   → 80 J'),480,135,P.ink,T(20,19),'center','500');
+        text(ctx,T('Cara 2:  W total = ΣF × s = 20 × 4 = 80 J','Method 2:  W total = ΣF × s = 20 × 4 = 80 J'),480,190,P.accent,24,'center','700'); ctx.globalAlpha=1; }
+    }
+    if(k===5){
+      text(ctx,T('RANGKUMAN','SUMMARY'),480,70,P.accent,40,'center','700',DF);
+      const rows=[['W = F · s · cos θ',T('Rumus usaha (joule)','Work formula (joule)'),P.ink],[T('θ < 90°  →  W positif','θ < 90°  →  W positive'),T('gaya memberi energi','force gives energy'),P.vf],['θ = 90° / s = 0  →  W = 0',T('tanpa transfer energi','no energy transfer'),P.vz],[T('θ > 90°  →  W negatif','θ > 90°  →  W negative'),T('gaya mengambil energi','force takes energy'),P.vfr],['W total = ΣW = ΣF · s',T('usaha oleh resultan gaya','work by resultant force'),P.accent]];
+      rows.forEach((r,i)=>{ if(u<i*1.4) return; ctx.globalAlpha=clamp01((u-i*1.4)/0.7); const y=135+i*78; rrect(ctx,110,y,740,62,10,P.surface,r[2],2.5); text(ctx,r[0],135,y+31,r[2],24,'left','700'); text(ctx,r[1],825,y+31,P.muted,17,'right','500'); ctx.globalAlpha=1; });
+    }
+    ctx.restore(); }
+  window.addEventListener('resize',()=>{ if(!$('#v-video').hidden) resize(); });
+  function relang(){ buildChapters(); labels(); drawMarkers(); if(pendingQ && !answered[pendingQ.id]) askQ(pendingQ); else if(!pendingQ) idle(); ui(); draw(); }
+  function reset(){ setPlay(false); answered={}; pendingQ=null; $('#vPauseNote').hidden=true; t=0; lastCap=-1; relang(); }
+  return {resize,relang,reset,pause:()=>{ if(playing) setPlay(false); },init:()=>{ relang(); resize(); }};
+})();
+
+/* =================== SIMULASI =================== */
+const Sim=(function(){
+  const cv=$('#scanvas'), ctx=cv.getContext('2d'); const G=9.8;
+  const PRESETS=[
+    {id:'pos',name:'Usaha positif · koper',nameEn:'Positive work · suitcase',p:{F:50,T:60,f:0,m:10,v:0,s:10},note:'Koper ditarik 50 N dengan sudut 60° sejauh 10 m tanpa gesekan. Prediksi: W = 50 × 10 × cos 60° = 250 J.',noteEn:'A suitcase is pulled with 50 N at 60° for 10 m with no friction. Prediction: W = 50 × 10 × cos 60° = 250 J.'},
+    {id:'tembok',name:'Usaha nol · s = 0',nameEn:'Zero work · s = 0',p:{F:30,T:0,f:40,m:20,v:0,s:5},note:'Gaya dorong 30 N tidak melebihi gesekan 40 N, jadi benda tidak berpindah. Semua gaya melakukan usaha nol.',noteEn:'The 30 N push does not exceed the 40 N friction, so the object does not move. Every force does zero work.'},
+    {id:'tegak',name:'Usaha nol · θ = 90°',nameEn:'Zero work · θ = 90°',p:{F:30,T:90,f:0,m:5,v:2,s:8},note:'Gaya 30 N ke atas, benda bergerak mendatar dengan v₀ = 2 m/s. Gaya tegak lurus perpindahan: usahanya nol, kelajuan tetap.',noteEn:'A 30 N force points up while the object slides horizontally at v₀ = 2 m/s. The force is perpendicular to the displacement: zero work, constant speed.'},
+    {id:'neg',name:'Usaha negatif · pengereman',nameEn:'Negative work · braking',p:{F:0,T:0,f:20,m:5,v:6,s:10},note:'Benda 5 kg meluncur 6 m/s lalu dihentikan gesekan 20 N. Usaha gesekan negatif dan sama dengan ΔEk = −90 J.',noteEn:'A 5 kg object slides at 6 m/s and is stopped by 20 N of friction. Friction does negative work equal to ΔEk = −90 J.'},
+    {id:'misiA',name:'Misi A · resultan gaya',nameEn:'Mission A · resultant force',p:{F:40,T:30,f:14.6,m:10,v:0,s:8},note:'Peti ditarik 40 N bersudut 30°, gesekan 14,6 N, sejauh 8 m. Hitung dulu W total, lalu kunci prediksimu.',noteEn:'A crate is pulled with 40 N at 30°, friction 14.6 N, for 8 m. Work out W total first, then lock your prediction.'},
+    {id:'tahan',name:'Usaha negatif · menahan',nameEn:'Negative work · holding back',p:{F:30,T:150,f:0,m:10,v:5,s:3},note:'Benda bergerak ke kanan 5 m/s sementara gaya 30 N menarik miring ke belakang (θ = 150°). cos 150° negatif, jadi usaha gaya tarik negatif.',noteEn:'The object moves right at 5 m/s while a 30 N force pulls back at an angle (θ = 150°). cos 150° is negative, so the pull does negative work.'}];
+  const IDS={F:'iF',T:'iT',f:'iFr',m:'iM',v:'iV',s:'iS'};
+  let st=null, running=false, raf=0, last=0, speed=1, preset='misiA', pred=null;
+  function P(){ return {F:+$('#iF').value,T:+$('#iT').value,f:+$('#iFr').value,m:+$('#iM').value,v:+$('#iV').value,s:+$('#iS').value}; }
+  function setP(p){ Object.keys(IDS).forEach(k=>{ $('#'+IDS[k]).value=p[k]; }); outputs(); }
+  function outputs(){ const p=P(); $('#oF').textContent=fmt(p.F,0)+' N'; $('#oT').textContent=p.T+'°'; $('#oFr').textContent=fmt(p.f,1)+' N'; $('#oM').textContent=p.m+' kg'; $('#oV').textContent=fmt(p.v,1)+' m/s'; $('#oS').textContent=fmt(p.s,1)+' m';
+    const fy=p.F*Math.sin(p.T*Math.PI/180), lift=fy>p.m*G+1e-9; const w=$('#sWarn'); w.hidden=!lift;
+    if(lift) w.textContent=T('Komponen tegak F sin θ = '+fmt(fy,1)+' N lebih besar dari berat benda '+fmt(p.m*G,1)+' N, sehingga benda terangkat dari lantai. Kurangi F, ubah θ, atau tambah massa.','The vertical component F sin θ = '+fmt(fy,1)+' N is larger than the weight '+fmt(p.m*G,1)+' N, so the object lifts off the floor. Reduce F, change θ or add mass.');
+    $('#sRun').disabled=lift; }
+  function fresh(){ const p=P(); const th=p.T*Math.PI/180; const Fx=p.F*Math.cos(th);
+    const dir=p.v>0?1:(Fx>p.f?1:(Fx<-p.f?-1:0)); const x0=dir<0?11:1;
+    st={p,th,Fx,x0,x:x0,v:p.v,t:0,WF:0,Wf:0,path:0,done:false,why:'',started:false}; }
+  function stepPhys(dt){ const s=st, p=s.p; let fx;
+    if(Math.abs(s.v)<1e-12){ if(Math.abs(s.Fx)<=p.f+1e-12){ s.v=0; end(s.started?'stop':'static'); return; } fx=-Math.sign(s.Fx)*p.f; }
+    else fx=-Math.sign(s.v)*p.f;
+    s.started=true;
+    const a=(s.Fx+fx)/p.m; let vn=s.v+a*dt, use=dt, stopped=false;
+    if(s.v!==0 && vn!==0 && Math.sign(vn)!==Math.sign(s.v)){ use=-s.v/a; vn=0; stopped=true; }
+    let dx=(s.v+vn)/2*use; const disp=s.x-s.x0;
+    if(Math.abs(disp+dx)>=p.s-1e-12){ const d=Math.sign(dx||1)*p.s-disp; const v2=s.v*s.v+2*a*d; vn=(Math.sign(s.v)||Math.sign(a)||1)*Math.sqrt(Math.max(0,v2)); use=Math.abs(a)>1e-12?(vn-s.v)/a:(Math.abs(s.v)>0?d/s.v:0); s.WF+=s.Fx*d; s.Wf+=fx*d; s.path+=Math.abs(d); s.x+=d; s.v=vn; s.t+=Math.abs(use); end('dist'); return; }
+    s.WF+=s.Fx*dx; s.Wf+=fx*dx; s.path+=Math.abs(dx); s.x+=dx; s.v=vn; s.t+=use;
+    if(stopped){ s.v=0; end('stop'); return; }
+    if(s.t>30) end('time'); }
+  function runLabel(){ $('#sRun').textContent=running?T('⏸ Jeda','⏸ Pause'):(st&&st.started&&!st.done?T('▶ Lanjut','▶ Resume'):T('▶ Jalankan','▶ Run')); $('#sSpeed').textContent=T('Laju ','Speed ')+fmt(speed,speed%1?1:0)+'×'; }
+  function end(why){ st.done=true; st.why=why; running=false; runLabel(); status(); table(); checkPred(); }
+  function loop(now){ if(!running) return; let dt=Math.min(0.05,(now-last)/1000)*speed; last=now; const h=1/480; while(dt>0 && !st.done){ const d=Math.min(h,dt); stepPhys(d); dt-=d; } draw(); table(); status(); if(running) raf=requestAnimationFrame(loop); }
+  function run(){ if($('#sRun').disabled) return; if(running){ running=false; runLabel(); return; }
+    if(!st||st.done) fresh(); running=true; runLabel(); last=performance.now(); raf=requestAnimationFrame(loop); }
+  function reset(){ running=false; cancelAnimationFrame(raf); fresh(); runLabel(); draw(); table(); status(); $('#sPredMsg').textContent=pred!=null?T('Prediksi terkunci: ','Prediction locked: ')+fmt(pred,1)+' J':''; }
+  function kind(w){ return Math.abs(w)<0.05?['zero',T('Nol','Zero')]:w>0?['pos',T('Positif','Positive')]:['neg',T('Negatif','Negative')]; }
+  function table(){ if(!st) return; const s=st, p=s.p; const disp=s.x-s.x0; const dEk=0.5*p.m*(s.v*s.v-p.v*p.v); const Wt=s.WF+s.Wf;
+    const max=Math.max(1,Math.abs(s.WF),Math.abs(s.Wf),Math.abs(Wt));
+    const bar=(w,col)=>{ const f=Math.min(1,Math.abs(w)/max)*50; return '<div class="bar"><i style="background:'+col+';'+(w>=0?'left:50%;width:'+f+'%':'right:50%;width:'+f+'%')+'"></i></div>'; };
+    const row=(name,calc,w,col)=>{ const k=kind(w); return '<tr><td>'+name+'</td><td class="mono small">'+calc+'</td><td class="num"><b>'+fmtS(w,1)+' J</b></td><td><span class="pill '+k[0]+'">'+k[1]+'</span></td><td>'+bar(w,col)+'</td></tr>'; };
+    const perp=T('tegak lurus s (θ = 90°)','perpendicular to s (θ = 90°)');
+    let h='';
+    h+=row(T('Gaya tarik F','Pulling force F'),'F·s·cos θ = '+fmt(p.F,0)+' × '+fmt(disp,2)+' × cos '+p.T+'°',s.WF,cssv('--vf'));
+    h+=row(T('Gaya gesek f','Friction f'),T('−f × jarak = −','−f × distance = −')+fmt(p.f,1)+' × '+fmt(s.path,2),s.Wf,cssv('--vfric'));
+    h+=row(T('Gaya berat w','Weight w'),perp,0,cssv('--vzero'));
+    h+=row(T('Gaya normal N','Normal force N'),perp,0,cssv('--vzero'));
+    const kt=kind(Wt);
+    h+='<tr style="background:var(--surface-2)"><td><b>'+T('Usaha total','Total work')+'</b></td><td class="mono small">ΣW = '+fmtS(s.WF,1)+' + ('+fmtS(s.Wf,1)+')</td><td class="num"><b>'+fmtS(Wt,1)+' J</b></td><td><span class="pill '+kt[0]+'">'+kt[1]+'</span></td><td>'+bar(Wt,cssv('--accent'))+'</td></tr>';
+    h+='<tr><td>'+T('Perubahan energi kinetik','Change in kinetic energy')+'</td><td class="mono small">½m(v² − v₀²) = ½ × '+p.m+' × ('+fmt(s.v,2)+'² − '+fmt(p.v,1)+'²)</td><td class="num"><b>'+fmtS(dEk,1)+' J</b></td><td colspan="2" class="small">'+(Math.abs(dEk-Wt)<0.2?T('✓ sama dengan W<sub>total</sub>','✓ equals W<sub>total</sub>'):'')+'</td></tr>';
+    $('#sTable').innerHTML=h; }
+  function status(){ if(!st) return; const s=st, p=s.p; let m='t = '+fmt(s.t,2)+' s · v = '+fmt(s.v,2)+' m/s · s = '+fmt(s.x-s.x0,2)+' m. ';
+    if(!s.done && !running && !s.started) m+=T('Tekan Jalankan untuk memulai.','Press Run to start.');
+    if(s.done){ m+={dist:T('Benda sudah berpindah ','The object has moved ')+fmt(p.s,1)+' m.',stop:T('Benda berhenti karena gaya yang berlawanan dengan geraknya.','The object stopped because of forces opposing its motion.'),
+      static:T('Benda tidak berpindah: komponen mendatar F ('+fmt(Math.abs(s.Fx),1)+' N) tidak melebihi gaya gesek ('+fmt(p.f,1)+' N). Karena s = 0, usaha semua gaya nol.','The object does not move: the horizontal component of F ('+fmt(Math.abs(s.Fx),1)+' N) does not exceed friction ('+fmt(p.f,1)+' N). Since s = 0, every force does zero work.'),
+      time:T('Simulasi dihentikan setelah 30 s.','The simulation stopped after 30 s.')}[s.why]; }
+    $('#sStatus').textContent=m; }
+  function checkPred(){ if(pred==null) return; const W=st.WF+st.Wf; const ok=Math.abs(pred-W)<=Math.max(0.5,Math.abs(W)*0.02);
+    $('#sPredMsg').innerHTML=ok?'<b style="color:var(--good)">'+T('Tepat!','Spot on!')+'</b> '+T('Prediksi ','Prediction ')+fmt(pred,1)+' J, '+T('hasil ','result ')+fmt(W,1)+' J.':'<b style="color:var(--bad)">'+T('Meleset.','Missed.')+'</b> '+T('Prediksi ','Prediction ')+fmt(pred,1)+' J, '+T('hasil ','result ')+fmt(W,1)+' J. '+T('Periksa tanda tiap usaha.','Check the sign of each work.');
+    if(ok){ award('sim-pred-'+preset+'-'+JSON.stringify(st.p),30,T('Prediksi tepat','Accurate prediction')); giveBadge('prediksi'); } pred=null; }
+  function resize(){ const r=cv.getBoundingClientRect(); if(!r.width) return; const dpr=Math.min(2,window.devicePixelRatio||1); cv.width=Math.round(r.width*dpr); cv.height=Math.round(r.height*dpr); ctx.setTransform(dpr,0,0,dpr,0,0); draw(); }
+  function draw(){ const r=cv.getBoundingClientRect(); const w=r.width, h=r.height; if(!w||!st) return; const Pc=palette(); const s=st, p=s.p;
+    grid(ctx,w,h,Pc,30); const Lm=24, ppm=(w-2*Lm)/12, GY=h-86, BW=Math.max(46,Math.min(90,ppm*1.1)), BH=BW*0.8;
+    ctx.strokeStyle=Pc.ink; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(Lm,GY); ctx.lineTo(w-Lm,GY); ctx.stroke();
+    for(let m=0;m<=12;m++){ const x=Lm+m*ppm; ctx.strokeStyle=Pc.muted; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(x,GY); ctx.lineTo(x,GY+8); ctx.stroke(); if(w>520||m%2===0) text(ctx,String(m),x,GY+20,Pc.muted,12,'center','400'); }
+    text(ctx,'m',w-Lm,GY+36,Pc.muted,12,'right','400');
+    const X0=Lm+s.x0*ppm, X=Lm+s.x*ppm; ctx.save(); ctx.strokeStyle=Pc.muted; ctx.setLineDash([5,5]); ctx.beginPath(); ctx.moveTo(X0,GY-BH-20); ctx.lineTo(X0,GY+40); ctx.stroke(); ctx.restore();
+    if(Math.abs(s.x-s.x0)>0.03){ arrow(ctx,X0,GY+50,X,GY+50,Pc.vs,3.5,11); text(ctx,'s = '+fmt(s.x-s.x0,2)+' m',(X0+X)/2,GY+68,Pc.vs,13,'center'); }
+    crate(ctx,X-BW/2,GY-BH,BW,BH,Pc); const cx=X, cy=GY-BH/2; const sc=Math.min(1,w/700);
+    if(p.F>0){ const Lf=(30+p.F*1.5)*sc; const ex=cx+Lf*Math.cos(s.th), ey=cy-Lf*Math.sin(s.th);
+      if(Math.abs(Math.cos(s.th))>0.02 && Math.abs(Math.sin(s.th))>0.02){ arrow(ctx,cx,cy,ex,cy,Pc.vf,2.5,10,[7,5]); arrow(ctx,ex,cy,ex,ey,Pc.vz,2.5,10,[7,5]); }
+      arrow(ctx,cx,cy,ex,ey,Pc.vf,4.5,14); text(ctx,'F = '+fmt(p.F,0)+' N',ex+(Math.cos(s.th)>=0?8:-8),ey-12,Pc.vf,14,Math.cos(s.th)>=0?'left':'right','700'); }
+    let fdir=0; if(p.f>0){ if(Math.abs(s.v)>1e-9) fdir=-Math.sign(s.v); else if(Math.abs(s.Fx)>0) fdir=-Math.sign(s.Fx); }
+    const fShown=s.why==='static'?Math.min(p.f,Math.abs(s.Fx)):p.f;
+    if(fdir && fShown>0){ const Lr=(18+fShown*1.6)*sc; const sx=cx+fdir*BW/2, y=GY-8; arrow(ctx,sx,y,sx+fdir*Lr,y,Pc.vfr,4.5,13); text(ctx,'f = '+fmt(fShown,1)+' N',sx+fdir*(Lr+6),y-14,Pc.vfr,13,fdir<0?'right':'left','700'); }
+    if($('#sAll').checked){ const wN=p.m*G, N=Math.max(0,wN-p.F*Math.sin(s.th)); const k=Math.min(0.9,60/Math.max(wN,1));
+      arrow(ctx,cx-BW/4,GY,cx-BW/4,GY+Math.min(60,wN*k),Pc.vz,3.5,11); text(ctx,'w = '+fmt(wN,0)+' N',cx-BW/4-6,GY+Math.min(60,wN*k)-4,Pc.vz,12,'right');
+      if(N>0){ arrow(ctx,cx-BW/4,GY-BH,cx-BW/4,GY-BH-Math.min(60,N*k),Pc.vz,3.5,11); text(ctx,'N = '+fmt(N,0)+' N',cx-BW/4-6,GY-BH-Math.min(60,N*k)+6,Pc.vz,12,'right'); } }
+    text(ctx,'v = '+fmt(s.v,2)+' m/s',Lm+4,18,Pc.ink,14,'left','600'); text(ctx,'t = '+fmt(s.t,2)+' s',Lm+4,38,Pc.muted,13,'left','400');
+    if(p.F>0){ text(ctx,'F cos θ = '+fmt(s.Fx,1)+' N '+T('(sejajar lantai)','(along the floor)'),Lm+4,60,Pc.vf,13,'left','600'); text(ctx,'F sin θ = '+fmt(p.F*Math.sin(s.th),1)+' N '+T('(tegak)','(vertical)'),Lm+4,80,Pc.vz,13,'left','600'); }
+    text(ctx,'W total = '+fmtS(s.WF+s.Wf,1)+' J',w-Lm-4,18,Pc.accent,15,'right','700'); }
+  function buildPresets(){ $('#sPresets').innerHTML=PRESETS.map(x=>'<button data-p="'+x.id+'" class="'+(x.id===preset?'on':'')+'">'+L(x,'name')+'</button>').join('');
+    const x=PRESETS.find(p=>p.id===preset); $('#sPresetNote').textContent=x?L(x,'note'):T('Skenario bebas. Ubah nilai lalu jalankan.','Free scenario. Change the values, then run.'); }
+  function pick(id){ const x=PRESETS.find(p=>p.id===id); if(!x) return; preset=id; setP(x.p); buildPresets(); reset(); }
+  $('#sPresets').addEventListener('click',e=>{ const b=e.target.closest('[data-p]'); if(b) pick(b.dataset.p); });
+  Object.values(IDS).forEach(id=>$('#'+id).addEventListener('input',()=>{ preset='custom'; buildPresets(); outputs(); reset(); }));
+  $('#sRun').addEventListener('click',run); $('#sReset').addEventListener('click',reset); $('#sAll').addEventListener('change',draw);
+  $('#sSpeed').addEventListener('click',()=>{ speed=speed===1?0.5:speed===0.5?2:1; runLabel(); });
+  $('#sPredLock').addEventListener('click',()=>{ const v=parseNum($('#sPred').value); if(isNaN(v)){ $('#sPredMsg').textContent=T('Tulis angka, misalnya 160,3','Write a number, for example 160.3'); return; } reset(); pred=v; $('#sPredMsg').textContent=T('Prediksi terkunci: ','Prediction locked: ')+fmt(v,1)+T(' J. Sekarang jalankan simulasi.',' J. Now run the simulation.'); });
+  window.addEventListener('resize',()=>{ if(!$('#v-simulasi').hidden) resize(); });
+  function relang(){ buildPresets(); outputs(); runLabel(); table(); status(); draw(); }
+  pick('misiA');
+  return {resize,relang};
+})();
+
+/* =================== GAMIFIKASI =================== */
+const LEVELS=[
+  {id:1,title:'Konsep Usaha',titleEn:'The Concept of Work',goal:'Tujuan 1',goalEn:'Objective 1',type:'mc',desc:'Syarat usaha, rumus, satuan, dan komponen gaya.',descEn:'Conditions for work, formula, unit and force components.',xp:10,badge:'konsep',qs:[
+    {id:'g1a',q:'Seorang siswa mendorong tembok sekuat tenaga hingga berkeringat. Usaha yang ia lakukan pada tembok adalah…',qEn:'A student pushes a wall as hard as they can until they sweat. The work done on the wall is…',o:['Nol, karena tembok tidak berpindah','Besar, karena siswa lelah','Negatif, karena tembok melawan','Bergantung pada lamanya mendorong'],oEn:['Zero, because the wall does not move','Large, because the student is tired','Negative, because the wall pushes back','It depends on how long they push'],a:0,e:'Syarat usaha adalah adanya perpindahan. Tembok tidak berpindah (s = 0), jadi W = 0.',eEn:'Work needs a displacement. The wall does not move (s = 0), so W = 0.'},
+    {id:'g1b',q:'Satuan 1 joule setara dengan…',qEn:'1 joule is equivalent to…',o:['1 N·m','1 N/m','1 N·s','1 kg·m/s'],a:0,e:'W = F × s, sehingga satuannya newton × meter = N·m = joule.',eEn:'W = F × s, so the unit is newton × metre = N·m = joule.'},
+    {id:'g1c',q:'Pernyataan: “Usaha adalah besaran vektor karena gaya dan perpindahan sama-sama vektor.”',qEn:'Statement: “Work is a vector because force and displacement are both vectors.”',o:['Salah','Benar'],oEn:['False','True'],a:0,keep:true,e:'Usaha adalah besaran skalar. Ia hanya punya nilai dan tanda, tanpa arah.',eEn:'Work is a scalar. It has a value and a sign, but no direction.'},
+    {id:'g1d',q:'Gaya 20 N mendorong kotak sejauh 3 m searah gaya. Berapa usahanya?',qEn:'A 20 N force pushes a box 3 m in the direction of the force. How much work is done?',o:['60 J','23 J','6,7 J','17 J'],oEn:['60 J','23 J','6.7 J','17 J'],a:0,e:'W = F × s = 20 × 3 = 60 J.',eEn:'W = F × s = 20 × 3 = 60 J.'},
+    {id:'g1e',q:'Gaya tarik F membentuk sudut θ terhadap lantai, dan benda berpindah mendatar. Komponen gaya yang melakukan usaha adalah…',qEn:'A pulling force F makes an angle θ with the floor, and the object moves horizontally. The component of the force that does work is…',o:['F cos θ','F sin θ','F tan θ','F seluruhnya'],oEn:['F cos θ','F sin θ','F tan θ','All of F'],a:0,e:'Komponen yang sejajar perpindahan mendatar adalah F cos θ. Komponen F sin θ tegak lurus perpindahan.',eEn:'The component parallel to the horizontal displacement is F cos θ. The component F sin θ is perpendicular to it.'},
+    {id:'g1f',q:'Gaya 50 N membentuk sudut 60° dengan arah perpindahan sejauh 4 m. Berapa usahanya?',qEn:'A 50 N force makes a 60° angle with a 4 m displacement. How much work is done?',o:['100 J','200 J','173 J','0 J'],a:0,e:'W = 50 × 4 × cos 60° = 50 × 4 × 0,5 = 100 J.',eEn:'W = 50 × 4 × cos 60° = 50 × 4 × 0.5 = 100 J.'}]},
+  {id:2,title:'Positif, Nol, Negatif',titleEn:'Positive, Zero, Negative',goal:'Tujuan 3',goalEn:'Objective 3',type:'sort',desc:'Pilah usaha oleh gaya yang disebutkan dalam tiap situasi.',descEn:'Sort the work done by the named force in each situation.',xp:10,badge:'klasifikasi',qs:[
+    {id:'g2a',q:'Gaya dorong pada troli belanja yang bergerak maju.',qEn:'The push on a shopping trolley moving forward.',a:'pos',e:'Gaya dorong searah gerak (θ = 0°).',eEn:'The push is along the motion (θ = 0°).'},
+    {id:'g2b',q:'Gaya gesek jalan pada mobil yang sedang mengerem.',qEn:'Road friction on a car that is braking.',a:'neg',e:'Gaya gesek berlawanan dengan arah gerak (θ = 180°).',eEn:'Friction is opposite to the motion (θ = 180°).'},
+    {id:'g2c',q:'Gaya angkat tangan pada tas yang dibawa sambil berjalan mendatar dengan kecepatan tetap.',qEn:'The lifting force of a hand on a bag carried while walking on level ground at constant velocity.',a:'zero',e:'Gaya angkat ke atas, perpindahan mendatar (θ = 90°).',eEn:'The lift points up, the displacement is horizontal (θ = 90°).'},
+    {id:'g2d',q:'Gaya berat pada apel yang jatuh dari pohon.',qEn:'The weight of an apple falling from a tree.',a:'pos',e:'Gaya berat ke bawah, apel juga berpindah ke bawah (θ = 0°).',eEn:'Weight points down and the apple moves down (θ = 0°).'},
+    {id:'g2e',q:'Gaya berat pada bola yang sedang naik setelah dilempar ke atas.',qEn:'The weight of a ball that is rising after being thrown up.',a:'neg',e:'Gaya berat ke bawah, perpindahan ke atas (θ = 180°).',eEn:'Weight points down, the displacement is up (θ = 180°).'},
+    {id:'g2f',q:'Gaya normal lantai pada balok yang meluncur di lantai datar.',qEn:'The floor’s normal force on a block sliding across a level floor.',a:'zero',e:'Gaya normal tegak lurus lantai, perpindahan sejajar lantai (θ = 90°).',eEn:'The normal force is perpendicular to the floor, the displacement is along it (θ = 90°).'},
+    {id:'g2g',q:'Gaya tangan yang menahan kardus berat agar turun perlahan ke lantai.',qEn:'The force of hands holding back a heavy box so it is lowered slowly to the floor.',a:'neg',e:'Tangan menahan ke atas, kardus berpindah ke bawah (θ = 180°).',eEn:'The hands push up, the box moves down (θ = 180°).'},
+    {id:'g2h',q:'Gaya tegangan tali pada batu yang diputar dalam lingkaran horizontal dengan laju tetap.',qEn:'The tension in a string whirling a stone in a horizontal circle at constant speed.',a:'zero',e:'Tegangan tali mengarah ke pusat, selalu tegak lurus arah gerak (θ = 90°).',eEn:'The tension points to the centre, always perpendicular to the motion (θ = 90°).'}]},
+  {id:3,title:'Usaha oleh Resultan Gaya',titleEn:'Work by the Resultant Force',goal:'Tujuan 2',goalEn:'Objective 2',type:'num',desc:'Hitung usaha total dari beberapa gaya. Tulis jawaban dalam joule.',descEn:'Calculate the total work of several forces. Answer in joules.',xp:15,badge:'resultan',qs:[
+    {id:'g3a',q:'Balok ditarik gaya 30 N mendatar ke kanan. Gaya gesek 10 N. Balok berpindah 5 m ke kanan. Berapa usaha total?',qEn:'A block is pulled 30 N horizontally to the right. Friction is 10 N. The block moves 5 m to the right. What is the total work?',ans:100,tol:0.5,hint:'Resultan gaya F<sub>R</sub> = 30 − 10.',hintEn:'Resultant force F<sub>R</sub> = 30 − 10.',e:'F<sub>R</sub> = 20 N, W<sub>total</sub> = 20 × 5 = 100 J (atau 150 J + (−50 J)).',eEn:'F<sub>R</sub> = 20 N, W<sub>total</sub> = 20 × 5 = 100 J (or 150 J + (−50 J)).'},
+    {id:'g3b',q:'Dua siswa mendorong lemari searah dengan gaya 60 N dan 40 N. Gaya gesek lantai 70 N. Lemari berpindah 2 m. Berapa usaha total?',qEn:'Two students push a cupboard in the same direction with 60 N and 40 N. Floor friction is 70 N. The cupboard moves 2 m. What is the total work?',ans:60,tol:0.5,hint:'Jumlahkan gaya yang searah, lalu kurangi gaya gesek.',hintEn:'Add the forces in the same direction, then subtract friction.',e:'F<sub>R</sub> = 60 + 40 − 70 = 30 N, W<sub>total</sub> = 30 × 2 = 60 J.',eEn:'F<sub>R</sub> = 60 + 40 − 70 = 30 N, W<sub>total</sub> = 30 × 2 = 60 J.'},
+    {id:'g3c',q:'Usaha oleh gaya berat pada kotak 5 kg yang didorong sejauh 4 m di lantai mendatar adalah… (J)',qEn:'The work done by the weight of a 5 kg box pushed 4 m across a level floor is… (J)',ans:0,tol:0.01,hint:'Bandingkan arah gaya berat dengan arah perpindahan.',hintEn:'Compare the direction of the weight with the displacement.',e:'Gaya berat tegak lurus perpindahan mendatar, cos 90° = 0, jadi W = 0 J.',eEn:'Weight is perpendicular to the horizontal displacement, cos 90° = 0, so W = 0 J.'},
+    {id:'g3d',q:'Peti ditarik 40 N dengan sudut 30° terhadap lantai, gaya gesek 14,6 N, peti berpindah 8 m. Berapa usaha total? (cos 30° = 0,866)',qEn:'A crate is pulled with 40 N at 30° to the floor, friction is 14.6 N, and it moves 8 m. What is the total work? (cos 30° = 0.866)',ans:160.3,tol:1.5,hint:'W<sub>tarik</sub> = 40 × 8 × 0,866; W<sub>gesek</sub> = −14,6 × 8.',hintEn:'W<sub>pull</sub> = 40 × 8 × 0.866; W<sub>friction</sub> = −14.6 × 8.',e:'W<sub>tarik</sub> = 277,1 J, W<sub>gesek</sub> = −116,8 J, W<sub>total</sub> ≈ 160,3 J.',eEn:'W<sub>pull</sub> = 277.1 J, W<sub>friction</sub> = −116.8 J, W<sub>total</sub> ≈ 160.3 J.'},
+    {id:'g3e',q:'Kotak ditarik 25 N ke kanan dan 40 N ke kiri, lalu berpindah 3 m ke kiri. Gesekan diabaikan. Berapa usaha total?',qEn:'A box is pulled 25 N to the right and 40 N to the left, and moves 3 m to the left. Ignore friction. What is the total work?',ans:45,tol:0.5,hint:'Resultan gaya 15 N ke kiri, searah perpindahan.',hintEn:'The resultant is 15 N to the left, along the displacement.',e:'W<sub>40 N</sub> = +120 J, W<sub>25 N</sub> = −75 J, total = +45 J. Atau F<sub>R</sub>·s = 15 × 3 = 45 J.',eEn:'W<sub>40 N</sub> = +120 J, W<sub>25 N</sub> = −75 J, total = +45 J. Or F<sub>R</sub>·s = 15 × 3 = 45 J.'},
+    {id:'g3f',q:'Bonus: Mobil 1000 kg melaju 10 m/s lalu direm hingga berhenti. Berapa usaha oleh gaya rem? (gunakan W = ΔEk)',qEn:'Bonus: A 1000 kg car travelling at 10 m/s brakes to a stop. How much work does the braking force do? (use W = ΔEk)',ans:-50000,tol:1,hint:'ΔEk = ½ m v<sub>2</sub>² − ½ m v<sub>1</sub>² dengan v<sub>2</sub> = 0.',hintEn:'ΔEk = ½ m v<sub>2</sub>² − ½ m v<sub>1</sub>² with v<sub>2</sub> = 0.',e:'W = 0 − ½ × 1000 × 10² = −50 000 J. Tanda negatif: gaya rem mengambil energi kinetik mobil.',eEn:'W = 0 − ½ × 1000 × 10² = −50 000 J. The negative sign means the brakes take kinetic energy from the car.'}]}];
+
+let run=null;
+function unlocked(i){ return S.unlockAll || i===0 || S.lv[LEVELS[i-1].id]>0; }
+function stars(n){ let h=''; for(let i=0;i<3;i++) h+='<span class="'+(i<n?'':'off')+'">★</span>'; return h; }
+function renderCard(){ const st=S.student||{name:'—',cls:'—'}; const now=new Date();
+  const d=now.toLocaleDateString(LANG==='en'?'en-GB':'id-ID',{day:'numeric',month:'long',year:'numeric'})+' '+now.toLocaleTimeString(LANG==='en'?'en-GB':'id-ID',{hour:'2-digit',minute:'2-digit'});
+  const lvls=LEVELS.map(Lv=>'<span style="white-space:nowrap">L'+Lv.id+' '+(S.lv[Lv.id]?'★'.repeat(S.lv[Lv.id])+'☆'.repeat(3-S.lv[Lv.id]):'—')+'</span>').join('  ');
+  const got=BADGES.filter(b=>S.badges[b.id]).map(b=>L(b,'name')).join(', ')||'—';
+  const lv=Math.floor(S.xp/100)+1;
+  $('#gCard').innerHTML='<div class="head"><b>SIGMA · '+T('KARTU HASIL','RESULT CARD')+'</b><span>'+esc(d)+'</span></div><div class="body">'+
+    '<div><small>'+T('Nama','Name')+'</small><strong>'+esc(st.name)+'</strong></div>'+
+    '<div><small>'+T('Kelas','Class')+'</small><strong>'+esc(st.cls)+'</strong></div>'+
+    '<div><small>XP</small><strong class="mono">'+S.xp+' · Lv '+lv+'</strong></div>'+
+    '<div style="grid-column:span 2"><small>'+T('Bintang level','Level stars')+'</small><strong class="mono" style="font-size:15px">'+lvls+'</strong></div>'+
+    '<div style="grid-column:1/-1"><small>'+T('Lencana','Badges')+' ('+BADGES.filter(b=>S.badges[b.id]).length+'/'+BADGES.length+')</small><strong style="font-size:15px">'+esc(got)+'</strong></div></div>'; }
+function renderHub(){ if(run) return;
+  $('#gLevels').innerHTML=LEVELS.map((Lv,i)=>{ const u=unlocked(i), best=S.lv[Lv.id]||0;
+    return '<div class="lvl'+(u?'':' locked')+'"><span class="eyebrow">Level '+Lv.id+' · '+L(Lv,'goal')+'</span><h3>'+L(Lv,'title')+'</h3><p class="meta">'+L(Lv,'desc')+'</p><p class="meta">'+Lv.qs.length+T(' soal · ',' questions · ')+Lv.xp+T(' XP per jawaban benar',' XP per correct answer')+'</p><div class="stars">'+stars(best)+'</div>'+
+    (u?'<button class="btn primary" data-start="'+i+'">'+(best?T('Main lagi','Play again'):T('Mulai misi','Start mission'))+'</button>':'<button class="btn" disabled>'+T('Terkunci · selesaikan Level ','Locked · finish Level ')+(Lv.id-1)+'</button>')+'</div>'; }).join('');
+  $('#gBadges').innerHTML=BADGES.map(b=>'<div class="badge'+(S.badges[b.id]?' got':'')+'"><span class="seal">'+b.seal+'</span><span><b>'+L(b,'name')+'</b><br><span class="muted small">'+L(b,'how')+'</span></span></div>').join('');
+  const all=LEVELS.every(Lv=>S.lv[Lv.id]>0); const nm=S.student?esc(S.student.name):'';
+  $('#gComplete').innerHTML=all?'<div class="complete"><span class="eyebrow">Status</span><h3>MISSION COMPLETE</h3><p>'+T('Selamat, Agen '+nm+'! Ketiga level selesai. Kamu sudah bisa menjelaskan konsep usaha, menghitung usaha oleh resultan gaya, dan membedakan usaha positif, nol, dan negatif.','Well done, Agent '+nm+'! All three levels are complete. You can now explain the concept of work, calculate the work done by the resultant force, and distinguish positive, zero and negative work.')+'</p></div>':'';
+  $('#gUnlock').hidden=S.unlockAll; renderCard(); }
+$('#gLevels').addEventListener('click',e=>{ const b=e.target.closest('[data-start]'); if(b) start(Number(b.dataset.start)); });
+$('#gUnlock').addEventListener('click',()=>{ S.unlockAll=true; save(); renderHub(); toast(T('Semua level terbuka','All levels unlocked')); });
+
+function start(i){ const Lv=LEVELS[i]; run={L:Lv,i,idx:0,hearts:3,streak:0,res:[],answered:false,qs:Lv.type==='num'?Lv.qs.slice():shuffle(Lv.qs)}; $('#gHub').hidden=true; $('#gArena').hidden=false; renderQ(); window.scrollTo({top:0}); }
+function quit(){ run=null; $('#gArena').hidden=true; $('#gHub').hidden=false; renderHub(); }
+function arenaTop(){ const r=run; let dots=''; r.qs.forEach((q,i)=>{ dots+='<i class="'+(r.res[i]===true?'ok':r.res[i]===false?'no':i===r.idx?'cur':'')+'"></i>'; });
+  let hearts=''; for(let i=0;i<3;i++) hearts+='<span class="'+(i<r.hearts?'':'off')+'">♥</span>';
+  return '<div class="arena-top"><div><span class="eyebrow">Level '+r.L.id+' · '+L(r.L,'title')+'</span><div class="dots" style="margin-top:6px">'+dots+'</div></div><div class="row"><span class="hearts" aria-label="'+r.hearts+'">'+hearts+'</span><span class="chip">'+T('Beruntun','Streak')+' <strong>'+r.streak+'</strong></span><button class="btn small" id="gQuit">'+T('Keluar','Exit')+'</button></div></div>'; }
+function renderQ(){ const r=run, q=r.qs[r.idx], A=$('#gArena');
+  if(r.answered){ return; }
+  let body='<div class="arena">'+arenaTop()+'<p class="small muted">'+T('Soal ','Question ')+(r.idx+1)+T(' dari ',' of ')+r.qs.length+'</p>';
+  if(r.L.type==='mc'){ body+='<p class="scenario">'+L(q,'q')+'</p><div class="opts" id="gOpts"></div>'; }
+  if(r.L.type==='sort'){ body+='<p class="small muted">'+T('Usaha oleh gaya ini bernilai…','The work done by this force is…')+'</p><p class="scenario">'+L(q,'q')+'</p><div class="sortbtns" id="gSort"><button data-k="pos" style="--c:var(--vf)">'+T('Positif','Positive')+'</button><button data-k="zero" style="--c:var(--vzero)">'+T('Nol','Zero')+'</button><button data-k="neg" style="--c:var(--vfric)">'+T('Negatif','Negative')+'</button></div>'; }
+  if(r.L.type==='num'){ body+='<p class="scenario">'+L(q,'q')+'</p><div class="numrow"><input id="gNum" inputmode="decimal" placeholder="'+T('jawaban','answer')+'" aria-label="J"><span class="mono">J</span><button class="btn primary" id="gCheck">'+T('Periksa','Check')+'</button><button class="btn" id="gHint">'+T('Petunjuk','Hint')+'</button></div><div id="gHintBox"></div>'; }
+  body+='<div id="gFb"></div></div>'; A.innerHTML=body;
+  $('#gQuit').addEventListener('click',quit);
+  if(r.L.type==='mc'){ const O=L(q,'o'); const order=q.keep?O.map((_,i)=>i):shuffle(O.map((_,i)=>i)); const box=$('#gOpts'); order.forEach(i=>{ const b=document.createElement('button'); b.className='opt'; b.innerHTML=O[i]; b.dataset.i=i; box.appendChild(b); });
+    box.addEventListener('click',e=>{ const b=e.target.closest('.opt'); if(!b||b.disabled) return; const ok=Number(b.dataset.i)===q.a; box.querySelectorAll('.opt').forEach(x=>{ x.disabled=true; if(Number(x.dataset.i)===q.a) x.classList.add('ok'); }); if(!ok) b.classList.add('no'); answer(ok,L(q,'e')); }); }
+  if(r.L.type==='sort'){ const box=$('#gSort'); box.addEventListener('click',e=>{ const b=e.target.closest('[data-k]'); if(!b||b.disabled) return; const ok=b.dataset.k===q.a; box.querySelectorAll('button').forEach(x=>{ x.disabled=true; x.style.opacity=(x===b||x.dataset.k===q.a)?'1':'.35'; }); answer(ok,(ok?'':T('Jawaban: ','Answer: ')+'<b>'+{pos:T('Positif','Positive'),zero:T('Nol','Zero'),neg:T('Negatif','Negative')}[q.a]+'</b>. ')+L(q,'e')); }); }
+  if(r.L.type==='num'){ let hinted=false; const inp=$('#gNum'); inp.focus();
+    const check=()=>{ const v=parseNum(inp.value); if(isNaN(v)){ $('#gFb').innerHTML='<div class="fb no">'+T('Tulis jawaban berupa angka, misalnya 160,3 atau −50000.','Write a number, for example 160.3 or −50000.')+'</div>'; return; }
+      const ok=Math.abs(v-q.ans)<=q.tol; inp.disabled=true; $('#gCheck').disabled=true; $('#gHint').disabled=true; answer(ok,(ok?'':T('Jawaban: ','Answer: ')+'<b class="mono">'+fmt(q.ans,q.ans%1?1:0)+' J</b>. ')+L(q,'e'),hinted); };
+    $('#gCheck').addEventListener('click',check); inp.addEventListener('keydown',e=>{ if(e.key==='Enter') check(); });
+    $('#gHint').addEventListener('click',()=>{ hinted=true; $('#gHintBox').innerHTML='<div class="fb" style="background:var(--accent-soft);border-left:4px solid var(--accent)">'+L(q,'hint')+' <span class="muted small">'+T('(XP soal ini jadi setengah)','(this question now gives half XP)')+'</span></div>'; }); }
+}
+function answer(ok,expl,hinted){ const r=run, q=r.qs[r.idx]; r.res[r.idx]=ok; r.answered=true;
+  if(ok){ r.streak++; let pts=r.L.xp; if(hinted) pts=Math.round(pts/2); award(q.id,pts,r.streak>=2?T('beruntun ','streak ')+r.streak:''); if(r.streak>=3) award(q.id+'-streak',5,T('bonus beruntun','streak bonus')); }
+  else { r.streak=0; r.hearts--; }
+  const last=r.idx===r.qs.length-1, dead=r.hearts<=0;
+  $('#gArena .arena-top').outerHTML=arenaTop(); $('#gQuit').addEventListener('click',quit);
+  $('#gFb').innerHTML='<div class="fb '+(ok?'ok':'no')+'"><b>'+(ok?T('Benar!','Correct!'):T('Kurang tepat.','Not quite.'))+'</b> '+expl+'</div><div class="row" style="margin-top:10px"><button class="btn primary" id="gNext">'+(dead?T('Lihat hasil','See results'):last?T('Selesaikan level','Finish level'):T('Soal berikutnya','Next question'))+'</button></div>';
+  $('#gNext').addEventListener('click',()=>{ if(dead||last) finish(); else { r.idx++; r.answered=false; renderQ(); } }); $('#gNext').focus(); }
+function finish(){ const r=run, Lv=r.L; const pass=r.hearts>0; const correct=r.res.filter(x=>x===true).length; const nm=S.student?esc(S.student.name):'';
+  if(pass){ S.lv[Lv.id]=Math.max(S.lv[Lv.id]||0,r.hearts); save(); }
+  const next=LEVELS[r.i+1]; const i=r.i; run=null;
+  if(pass) giveBadge(Lv.badge);
+  $('#gHub').hidden=true; $('#gArena').hidden=false;
+  $('#gArena').innerHTML='<div class="arena"><span class="eyebrow">Level '+Lv.id+' · '+L(Lv,'title')+'</span><h2 style="font-size:30px">'+(pass?T('Misi berhasil, Agen '+nm+'!','Mission accomplished, Agent '+nm+'!'):T('Misi gagal','Mission failed'))+'</h2>'+
+    (pass?'<div class="stars" style="font-size:34px">'+stars(r.hearts)+'</div>':'')+'<p>'+correct+T(' dari ',' of ')+r.qs.length+T(' jawaban benar. ',' answers correct. ')+(pass?(r.hearts===3?T('Sempurna, tanpa kehilangan nyawa.','Perfect, no lives lost.'):T('Sisa nyawa: ','Lives left: ')+r.hearts+'.'):T('Nyawamu habis. Pelajari lagi bagian materi yang sesuai lalu coba lagi.','You ran out of lives. Review the matching part of the material and try again.'))+'</p>'+
+    '<div class="row"><button class="btn" id="gRetry">'+T('Ulangi level','Retry level')+'</button>'+(pass&&next?'<button class="btn primary" id="gNextLvl">'+T('Lanjut ke Level ','Go to Level ')+next.id+'</button>':'')+'<button class="btn" id="gBack">'+T('Kembali ke peta misi','Back to mission map')+'</button>'+(!pass?'<button class="btn" data-go="materi">'+T('Buka Materi','Open Material')+'</button>':'')+'</div></div>';
+  $('#gRetry').addEventListener('click',()=>start(i)); $('#gBack').addEventListener('click',quit); const nb=$('#gNextLvl'); if(nb) nb.addEventListener('click',()=>start(i+1)); }
+
+/* ---------- boot ---------- */
+applyStatic(); hud(); mountChecks(); Video.init(); renderHub();
+if(S.student){ $('#inName').value=S.student.name; $('#inClass').value=S.student.cls; }
+show(location.hash.slice(1)||'beranda');
+})();
+</script>
+
+</body></html>
